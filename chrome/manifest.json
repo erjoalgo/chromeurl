@@ -1,0 +1,17 @@
+{
+    "name": "chrome-current-url",
+    "description" : "make chrome's currently active url available to other native processes",
+    "version": "1.0",
+    "manifest_version": 2,
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "permissions": [
+        "activeTab",
+        "tabs",
+        "nativeMessaging",
+        "http://*/",
+        "https://*/"
+    ]
+}
