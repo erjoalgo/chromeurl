@@ -12,22 +12,22 @@ from setuptools import setup
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-VERSION=re.search("[0-9.]+", read("chromeurl/version.py")).group(0)
+VERSION = re.search("[0-9.]+", read("chromeurl/version.py")).group(0)
 
-exe="chromeurl"
-package="chromeurl"
+EXE = "chromeurl"
+PACKAGE = "chromeurl"
 
 setup(
-    name = "chrome-current-url-native",
-    version = VERSION,
-    author = "Ernesto Alfonso",
-    author_email = "erjoalgo@gmail.com",
-    description = ("native messaging host component of chrome current url extension. "
-                   "exposes the current chrome browser url via a REST endpoint"),
-    license = "GPLv3",
-    keywords = "chrome chromium url",
-    url = "https://github.com/erjoalgo/chrome-current-url",
-    packages=[package],
+    name="chrome-current-url-native",
+    version=VERSION,
+    author="Ernesto Alfonso",
+    author_email="erjoalgo@gmail.com",
+    description=("native messaging host component of chrome current url extension. "
+                 "exposes the current chrome browser url via a REST endpoint"),
+    license="GPLv3",
+    keywords="chrome chromium url",
+    url="https://github.com/erjoalgo/chrome-current-url",
+    packages=[PACKAGE],
     # long_description=read('README'),
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -37,34 +37,34 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            '{}={}.main:main'.format(exe, package),
+            '{}={}.main:main'.format(EXE, PACKAGE),
         ]
-            }
+    }
 )
 
-exe_abs=subprocess.check_output(["which", exe]).strip()
+EXE_ABS = subprocess.check_output(["which", EXE]).strip()
 
 def install_manifest():
-    if os.name=="darwin":
-        target="~/Library/Application Support/Google/Chrome/NativeMessagingHosts"
-    elif os.name=="posix":
-        target="~/.config/{}/NativeMessagingHosts".format("chromium")
+    if os.name == "darwin":
+        target = "~/Library/Application Support/Google/Chrome/NativeMessagingHosts"
+    elif os.name == "posix":
+        target = "~/.config/{}/NativeMessagingHosts".format("chromium")
 
-    host_name="com.erjoalgo.chrome_current_url"
-    manifest_path=os.path.expanduser(os.path.join(target, "{}.json".format(host_name)))
-    extension_id="ekofhnkbloagjhkldkgjcbmfealemjnh"
+    host_name = "com.erjoalgo.chrome_current_url"
+    manifest_path = os.path.expanduser(os.path.join(target, "{}.json".format(host_name)))
+    extension_id = "ekofhnkbloagjhkldkgjcbmfealemjnh"
 
-    manifest={
+    manifest = {
         "name": host_name,
         "description": "chrome current url native host component",
-        "path": exe_abs,
+        "path": EXE_ABS,
         "type": "stdio",
         "allowed_origins": [
             "chrome-extension://{}/".format(extension_id)
         ]
     }
 
-    with open( manifest_path, "w") as fh:
+    with open(manifest_path, "w") as fh:
         json.dump(manifest, fh, indent=4)
 
     print ("Native messaging host {} has been installed at {}".format(host_name, manifest_path))
