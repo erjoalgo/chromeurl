@@ -72,5 +72,5 @@ def install_manifest():
 install_manifest()
 
 # Local Variables:
-# compile-command: "python setup.py install"
+# compile-command: "python setup.py install --user"
 # End:
