@@ -1,8 +1,6 @@
-var port;
-
-function initTabNotifier (  ) {
+chrome.runtime.onInstalled.addListener(function() {
     var nativeMessagingHost = "com.erjoalgo.chrome_current_url";
-    port = chrome.runtime.connectNative(nativeMessagingHost);
+    var port = chrome.runtime.connectNative(nativeMessagingHost);
 
     port.onMessage.addListener(function(msg) {
         console.log("Received" + msg);
@@ -12,10 +10,6 @@ function initTabNotifier (  ) {
         console.log("Disconnected");
         console.log("Disconnected: "+chrome.runtime.lastError.message);
     });
-}
-
-chrome.runtime.onInstalled.addListener(function() {
-    initTabNotifier();
 
     chrome.tabs.onActivated.addListener(function(data){
         chrome.tabs.get(data.tabId, function(tab){
