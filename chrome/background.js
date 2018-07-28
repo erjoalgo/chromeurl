@@ -11,11 +11,22 @@ chrome.runtime.onInstalled.addListener(function() {
         console.log("Disconnected: "+chrome.runtime.lastError.message);
     });
 
-    chrome.tabs.onActivated.addListener(function(data){
-        chrome.tabs.get(data.tabId, function(tab){
-            var url = tab.url;
-            port.postMessage({ text: url });
+    function postCurrentTabUrl (tabId) {
+        chrome.tabs.get(tabId, function(tab){
+            if (tab != null) {
+                var url = tab.url;
+                port.postMessage({ text: url });
+            }
         });
+    }
+
+    chrome.tabs.onActivated.addListener(function(activeInfo){postCurrentTabUrl(activeInfo.tabId)});
+
+    chrome.tabs.onUpdated.addListener(function(tabId){postCurrentTabUrl(tabId)});
+
+    chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+        // assume there is always a tab if there is a current window
+        postCurrentTabUrl(tabs[0].id);
     });
 });
 
