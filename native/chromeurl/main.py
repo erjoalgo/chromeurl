@@ -81,5 +81,5 @@ if __name__ == "__main__":
     main()
 
 # Local Variables:
-# compile-command: "./chrome-current-url-native.py 123 -p 8080 --log /tmp/a.log"
+# compile-command: "./main.py fake-extension-id -p 8080 --log /tmp/a.log"
 # End:
