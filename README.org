@@ -1,9 +1,14 @@
-* install native component
+- install native component
   #+BEGIN_SRC sh
-  cd native
-  python setup.py install --user
-
+  $ cd native
+  $ python setup.py install --user
   #+END_SRC
-* install chrome extension
+- install extension
   - navigate to ~chrome://extensions/~
-  - ~load unpacked~ with path ~/chrome~
+  - ~load unpacked~ extension rooted at ~./chrome~
+- start chromium from a terminal to see debug messages
+- make REST call to get current url
+  #+BEGIN_SRC sh
+  $ curl http://127.0.0.1:19615/tabs/current/url
+  https://developer.chrome.com/extensions/activeTab
+  #+END_SRC
