@@ -1,0 +1,9 @@
+* install native component
+  #+BEGIN_SRC sh
+  cd native
+  python setup.py install --user
+
+  #+END_SRC
+* install chrome extension
+  - navigate to ~chrome://extensions/~
+  - ~load unpacked~ with path ~/chrome~
