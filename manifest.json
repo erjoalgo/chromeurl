@@ -1,0 +1,38 @@
+{
+    "name": "chrome-current-url",
+    "description" : "make chrome's currently active url available to other processes",
+    "version": "1.0",
+    "manifest_version": 2,
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "page_action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "images/get_started16.png",
+            "32": "images/get_started32.png",
+            "48": "images/get_started48.png",
+            "128": "images/get_started128.png"
+        }
+    },
+    "permissions": [
+        "storage",
+        "declarativeContent",
+        "activeTab",
+        "tabs",
+        "notifications",
+        "nativeMessaging",
+        "http://*/",
+        "https://*/",
+        "https://developer.chrome.com/",
+        "https://developer.chrome.com/extensions/getstarted"
+    ],
+    "icons": {
+        "16": "images/get_started16.png",
+        "32": "images/get_started32.png",
+        "48": "images/get_started48.png",
+        "128": "images/get_started128.png"
+    },
+    "options_page": "options.html"
+}
