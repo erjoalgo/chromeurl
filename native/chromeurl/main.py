@@ -7,6 +7,7 @@ import json
 import time
 from flask import Flask
 import argparse
+import logging
 
 try:
     from .version import __version__
@@ -18,10 +19,16 @@ parser.add_argument("extension_id") # chromium passes this positional arg on sta
 parser.add_argument("-p", "--port", default=19615)
 parser.add_argument("--log", help = "optionally log urls to a file")
 parser.add_argument("--version", action="version", version=__version__)
+parser.add_argument("-v", "--verbose", action="store_true")
 
 args=parser.parse_args()
-
 app = Flask(__name__)
+
+logging.basicConfig()
+logger = logging.getLogger('chromeurl')
+
+if args.verbose:
+    logger.setLevel(logging.DEBUG)
 
 current_url=None
 @app.route("/tabs/current/url")
@@ -36,21 +43,21 @@ def read_native_messages_loop(fh):
     while True:
         msg_len_str=fh.read(4)
         if not msg_len_str:
-            print ("got message of length 0?")
+            logger.debug ("got message of length 0?")
             time.sleep(.5)
             continue
 
         # platform dependent?
         msg_len=sum(ord(b)<<(8*(i)) for (i, b) in enumerate(msg_len_str))
 
-        print ("got message of length: {} {}".format(msg_len, (msg_len_str, len(msg_len_str))))
+        logger.debug ("got message of length: {} {}".format(msg_len, (msg_len_str, len(msg_len_str))))
 
         msg=fh.read(msg_len)
-        print ("message is {}".format(msg))
+        logger.debug ("message is {}".format(msg))
 
         data=json.loads(msg)
         url=data["text"]
-        print ("url is {}".format(url))
+        logger.info ("url is {}".format(url))
 
         current_url=url
         if log_fh:
@@ -62,11 +69,11 @@ def main():
     real_stdout=sys.stdout
     sys.stdout=sys.stderr
 
-    print ("starting native messaging stdin read loop...")
+    logger.info("starting native messaging stdin read loop...")
     read_loop_thread = Thread(target = read_native_messages_loop, args = (sys.stdin, ))
     read_loop_thread.start()
 
-    print ("starting http server...")
+    logger.info("starting http server on port {}".format(args.port))
     app.run(port=args.port)
 
 
