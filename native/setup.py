@@ -51,7 +51,7 @@ class PostInstallCommand(install):
         print ("Native messaging host {} has been installed at {}".format(host_name, manifest_path))
 
 setup(
-    name="chrome-current-url-native",
+    name="chromeurl",
     version=VERSION,
     author="Ernesto Alfonso",
     author_email="erjoalgo@gmail.com",
