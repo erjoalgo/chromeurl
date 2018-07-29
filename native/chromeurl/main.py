@@ -13,6 +13,7 @@ import time
 import argparse
 import logging
 from flask import Flask
+from flask import request
 
 try:
     from .version import __version__
@@ -29,6 +30,17 @@ current_url = None
 def get_current_url():
     "echo current url"
     return current_url or "None"
+
+@app.route("/exit")
+def exit_request():
+    "safely exit and free port for a newer process"
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    print ("got exit request. exiting...")
+    func()
+    # sys.exit(0)
+    return 'Server shutting down...'
 
 def read_native_messages_loop(fh, log_fh):
     "continuously read chrome extension messages"
@@ -80,7 +92,18 @@ def main():
 
     log_fh = open(args.log, "w") if args.log else None
     read_loop_thread = Thread(target=read_native_messages_loop, args=(sys.stdin, log_fh))
+    read_loop_thread.setDaemon(True)
     read_loop_thread.start()
+
+    try:
+        import urllib
+        urllib.urlretrieve("http://localhost:{}/exit".format(args.port))
+        print ("killed another running process...")
+        time.sleep(2)
+    except:
+        # import traceback
+        # traceback.print_exc()
+        pass
 
     logger.info("starting http server on port %s", args.port)
     app.run(port=args.port)
