@@ -26,10 +26,17 @@ class PostInstallCommand(install):
         install.run(self)
         EXE_ABS = subprocess.check_output(["which", EXE]).strip()
         # then install the manifest at the appropriate location
-        if os.name == "darwin":
-            target = "~/Library/Application Support/Google/Chrome/NativeMessagingHosts"
-        elif os.name == "posix":
-            target = "~/.config/{}/NativeMessagingHosts".format("chromium")
+
+        for target_parent in ["~/Library/Application Support/Google/", "~/.config/"]:
+            expanded=os.path.expanduser(target_parent)
+            cands=[dirname for dirname in (os.listdir(expanded) if os.path.exists(expanded) else [])\
+                   if re.search("chrom", dirname)]
+            if cands:
+                target=os.path.join(target_parent, cands[0], "NativeMessagingHosts")
+                break
+        else:
+            print ("cannot discover chrome config directory")
+            exit(1)
 
         host_name = "com.erjoalgo.chrome_current_url"
         manifest_path = os.path.expanduser(os.path.join(target, "{}.json".format(host_name)))
