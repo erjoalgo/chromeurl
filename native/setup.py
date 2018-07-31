@@ -29,8 +29,8 @@ class PostInstallCommand(install):
 
         for target_parent in ["~/Library/Application Support/Google/", "~/.config/"]:
             expanded=os.path.expanduser(target_parent)
-            cands=[dirname for dirname in (os.listdir(expanded) if os.path.exists(expanded) else [])\
-                   if re.search("chrom", dirname)]
+            dirnames=os.listdir(expanded) if os.path.exists(expanded) else []
+            cands=[dirname for dirname in dirnames if re.search("chrom", dirname)]
             if cands:
                 target=os.path.join(target_parent, cands[0], "NativeMessagingHosts")
                 break
