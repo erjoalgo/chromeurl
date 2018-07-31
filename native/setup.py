@@ -5,6 +5,7 @@ import json
 from setuptools.command.install import install
 import atexit
 from setuptools import setup
+import distutils.spawn
 
 # Utility function to read the README file.
 # Used for the long_description.  It's nice, because now 1) we have a top level
@@ -20,7 +21,7 @@ PACKAGE = "chromeurl"
 
 def install_manifest():
     """install chrome native host manifest file"""
-    EXE_ABS = subprocess.check_output(["which", EXE]).strip()
+    EXE_ABS=distutils.spawn.find_executable(EXE)
 
     for target_parent in ["~/Library/Application Support/Google/", "~/.config/"]:
         expanded=os.path.expanduser(target_parent)
