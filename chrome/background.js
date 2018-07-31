@@ -1,6 +1,4 @@
 chrome.runtime.onInstalled.addListener(function() {
-    alert("installed");
-    console.log( "installed");
     var nativeMessagingHost = "com.erjoalgo.chrome_current_url";
     var port = chrome.runtime.connectNative(nativeMessagingHost);
 
@@ -17,10 +15,7 @@ chrome.runtime.onInstalled.addListener(function() {
         chrome.tabs.get(tabId, function(tab){
             if (tab != null) {
                 var url = tab.url;
-                console.log( "url is "+url );
                 port.postMessage({ text: url });
-            } else  {
-                console.log( "tab is null" );
             }
         });
     }

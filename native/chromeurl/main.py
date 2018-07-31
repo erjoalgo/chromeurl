@@ -85,7 +85,7 @@ def main():
 
     args = parser.parse_args()
 
-    if args.verbose or True:
+    if args.verbose:
         logger.setLevel(logging.DEBUG)
 
     logger.info("starting native messaging stdin read loop...")
