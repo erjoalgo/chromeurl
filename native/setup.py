@@ -72,6 +72,7 @@ setup(
     url="https://github.com/erjoalgo/chrome-current-url",
     packages=[PACKAGE],
     # long_description=read('README'),
+    install_requires=['flask'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
