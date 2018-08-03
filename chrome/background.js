@@ -1,4 +1,8 @@
 chrome.runtime.onInstalled.addListener(function() {
+    alert("chrome url installed");
+}
+
+chrome.runtime.onStartup.addListener(function() {
     var nativeMessagingHost = "com.erjoalgo.chrome_current_url";
     var port = chrome.runtime.connectNative(nativeMessagingHost);
 
