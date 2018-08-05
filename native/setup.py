@@ -23,19 +23,18 @@ def install_manifest():
     """install chrome native host manifest file"""
     EXE_ABS=distutils.spawn.find_executable(EXE)
 
+    targets=[]
     for target_parent in ["~/Library/Application Support/Google/", "~/.config/"]:
         expanded=os.path.expanduser(target_parent)
         dirnames=os.listdir(expanded) if os.path.exists(expanded) else []
-        cands=[dirname for dirname in dirnames if re.search("chrom", dirname)]
-        if cands:
-            target=os.path.join(target_parent, cands[0], "NativeMessagingHosts")
-            break
-    else:
+        targets+=[os.path.join(target_parent, dirname, "NativeMessagingHosts")
+                 for dirname in dirnames if re.search("chrom", dirname)]
+
+    if not targets:
         print ("cannot discover chrome config directory")
         exit(1)
 
     host_name = "com.erjoalgo.chrome_current_url"
-    manifest_path = os.path.expanduser(os.path.join(target, "{}.json".format(host_name)))
     extension_id = "ekofhnkbloagjhkldkgjcbmfealemjnh"
 
     manifest = {
@@ -48,10 +47,17 @@ def install_manifest():
         ]
     }
 
-    with open(manifest_path, "w") as fh:
-        json.dump(manifest, fh, indent=4)
+    for target_dir in targets:
+        manifest_path = os.path.expanduser(os.path.join(target_dir, "{}.json".format(host_name)))
+        try:
+            with open(manifest_path, "w") as fh:
+                json.dump(manifest, fh, indent=4)
+                print ("installed native messaging host at: {}".format(manifest_path))
+        except Exception as ex:
+            # import traceback
+            # traceback.print_exc()
+            print ("warning: failed to install manifest at {}:\n\t {}".format(manifest_path, ex))
 
-    print ("Native messaging host {} has been installed at {}".format(host_name, manifest_path))
 
 _post_install=install_manifest
 
