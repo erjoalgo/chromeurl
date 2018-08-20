@@ -32,5 +32,10 @@ chrome.runtime.onStartup.addListener(function() {
         // assume there is always a tab if there is a current window
         postCurrentTabUrl(tabs[0].id);
     });
+
+    // TODO shutdown native host process on exit
+    // chrome.runtime.onExit.addListener(function() {
+    //     port.postMessage({ exit: true });
+    // });
 });
 

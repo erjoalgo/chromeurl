@@ -42,7 +42,7 @@ def exit_request():
     # sys.exit(0)
     return 'Server shutting down...'
 
-def read_native_messages_loop(fh, log_fh):
+def read_native_messages_loop(fh, log_fh, kill_server=None):
     "continuously read chrome extension messages"
     global current_url
 
@@ -62,6 +62,10 @@ def read_native_messages_loop(fh, log_fh):
         logger.debug("message is %s", msg)
 
         data = json.loads(msg)
+        if "exit" in data:
+            kill_server()
+            return
+
         url = data["text"]
         logger.debug("the url is %s", url)
 
@@ -85,28 +89,32 @@ def main():
 
     args = parser.parse_args()
 
-    if args.verbose:
-        logger.setLevel(logging.DEBUG)
+
+    port =  args.port
 
     logger.info("starting native messaging stdin read loop...")
 
+    def kill_server(kill_url="http://localhost:{}/exit".format(port)):
+        "kill a server at the specified kill url"
+        import urllib
+        print ("attempting to kill an existing service via {}...".format(kill_url))
+        urllib.urlretrieve(url)
+
+    try:
+        kill_server()
+        time.sleep(2)
+    except:
+        # normally the server isn't running, so this is ok
+        pass
+
+    logger.info("starting native messaging stdin read loop...")
     log_fh = open(args.log, "w") if args.log else None
-    read_loop_thread = Thread(target=read_native_messages_loop, args=(sys.stdin, log_fh))
+    read_loop_thread = Thread(target=read_native_messages_loop, args=(sys.stdin, log_fh, kill_server))
     read_loop_thread.setDaemon(True)
     read_loop_thread.start()
 
-    try:
-        import urllib
-        urllib.urlretrieve("http://localhost:{}/exit".format(args.port))
-        print ("killed another running process...")
-        time.sleep(2)
-    except:
-        # import traceback
-        # traceback.print_exc()
-        pass
-
-    logger.info("starting http server on port %s", args.port)
-    app.run(port=args.port)
+    logger.info("starting http server on port %s", port)
+    app.run(port=port)
 
 
 if __name__ == "__main__":
