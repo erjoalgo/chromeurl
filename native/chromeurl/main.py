@@ -63,7 +63,7 @@ def read_native_messages_loop(fh, log_fh):
 
         data = json.loads(msg)
         url = data["text"]
-        logger.info("url is %s", url)
+        logger.debug("the url is %s", url)
 
         current_url = url
         if log_fh:
