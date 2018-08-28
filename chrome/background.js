@@ -40,6 +40,15 @@ function start ( mode ) {
 
     chrome.tabs.onUpdated.addListener(function(tabId){postCurrentTabUrl(tabId)});
 
+    chrome.windows.onFocusChanged.addListener(function(windowId){
+        if (windowId != chrome.windows.WINDOW_ID_NONE) {
+            chrome.tabs.query({windowId: windowId, active: true}, function(tabs){
+                // assume there is always a tab if there is a current window
+                postCurrentTabUrl(tabs[0].id);
+            });
+        }
+    });
+
     chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
         // assume there is always a tab if there is a current window
         postCurrentTabUrl(tabs[0].id);
