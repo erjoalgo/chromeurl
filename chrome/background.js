@@ -1,6 +1,7 @@
+var POST_CURRENT_TAB_URL_SERVICE = "http://localhost:19615/tabs/current/url";
 var NATIVE_MESSAGING_HOST = "com.erjoalgo.chrome_current_url";
 
-function start ( ) {
+function start ( mode ) {
     var port = chrome.runtime.connectNative(NATIVE_MESSAGING_HOST);
     port.onMessage.addListener(function(msg) {
         console.log("Received" + msg);
@@ -15,7 +16,22 @@ function start ( ) {
         chrome.tabs.get(tabId, function(tab){
             if (tab != null) {
                 var url = tab.url;
-                port.postMessage({ text: url });
+                if (mode == "native") {
+                    port.postMessage({ text: url });
+                } else if (mode == "http") {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', POST_CURRENT_TAB_URL_SERVICE, true);
+                    xhr.setRequestHeader('Content-type', 'application/json');
+                    xhr.onreadystatechange = function() {
+                        if(xhr.readyState == 4 && xhr.status != 200) {
+                            console.log("failed to update current tab url: "+xhr.status);
+                            // alert(xhr.responseText);
+                        }
+                    }
+                    xhr.send(JSON.stringify({url: url}));
+                } else  {
+                    console.log("unknown mode: "+mode);
+                }
             }
         });
     }
@@ -35,12 +51,13 @@ function start ( ) {
     // });
 }
 
+var MODE = "http";
 chrome.runtime.onInstalled.addListener(function() {
     alert("chrome url installed!");
-    start();
+    start(MODE);
 });
 
 chrome.runtime.onStartup.addListener(function() {
     // console.log( "on startup..." );
-    start();
+    start(MODE);
 });
