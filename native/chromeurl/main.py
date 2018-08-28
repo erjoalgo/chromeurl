@@ -21,6 +21,7 @@ logger = logging.getLogger('chromeurl')
 try:
     from .version import __version__
 except:
+    logger.error("unable to determine version")
     __version__ = "unknown"
 
 
