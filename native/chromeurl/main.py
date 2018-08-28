@@ -15,13 +15,14 @@ import logging
 from flask import Flask
 from flask import request
 
+logging.basicConfig()
+logger = logging.getLogger('chromeurl')
+
 try:
     from .version import __version__
 except:
     __version__ = "unknown"
 
-logging.basicConfig()
-logger = logging.getLogger('chromeurl')
 
 app = Flask(__name__)
 
