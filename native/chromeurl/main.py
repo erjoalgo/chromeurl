@@ -107,8 +107,7 @@ def main():
 
     if args.verbose:
         logger.setLevel(logging.DEBUG)
-
-    port =  args.port
+    port = args.port
 
     logger.info("starting native messaging stdin read loop...")
 
@@ -116,7 +115,7 @@ def main():
         "kill a server at the specified kill url"
         import urllib
         print ("attempting to kill an existing service via {}...".format(kill_url))
-        urllib.urlretrieve(url)
+        urllib.urlretrieve(kill_url)
 
     try:
         kill_server()
@@ -127,7 +126,8 @@ def main():
 
     logger.info("starting native messaging stdin read loop...")
     log_fh = open(args.log, "w") if args.log else None
-    read_loop_thread = Thread(target=read_native_messages_loop, args=(sys.stdin, log_fh, kill_server))
+    read_loop_thread = Thread(target=read_native_messages_loop,
+                              args=(sys.stdin, log_fh, kill_server))
     read_loop_thread.setDaemon(True)
     read_loop_thread.start()
 
