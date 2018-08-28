@@ -49,6 +49,7 @@ function start ( mode ) {
         }
     });
 
+    // set the current tab initially
     chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
         // assume there is always a tab if there is a current window
         postCurrentTabUrl(tabs[0].id);
