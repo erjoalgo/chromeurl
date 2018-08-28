@@ -105,6 +105,8 @@ def main():
 
     args = parser.parse_args()
 
+    if args.verbose:
+        logger.setLevel(logging.DEBUG)
 
     port =  args.port
 
