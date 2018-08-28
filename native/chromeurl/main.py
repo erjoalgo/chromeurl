@@ -28,10 +28,24 @@ except:
 app = Flask(__name__)
 
 current_url = None
-@app.route("/tabs/current/url")
+@app.route("/tabs/current/url", methods=["GET", "POST"])
 def get_current_url():
     "echo current url"
-    return current_url or "None"
+    global current_url
+    logger.debug("{} /tabs/current/url".format(request.method))
+    if request.method == "GET":
+        return current_url or "None"
+    elif request.method == "POST":
+        data = request.json
+        url = data["url"]
+        current_url = url
+        return ""
+        # except Exception as ex:
+        #     logger.error("failed to parse post url request: {}".format(ex))
+        #     return str(ex), 500
+        #     # traceback.print_exc()
+    else:
+        logger.error("invalid method: {}".format(request.method))
 
 @app.route("/exit")
 def exit_request():
