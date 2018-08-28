@@ -1,11 +1,7 @@
-chrome.runtime.onInstalled.addListener(function() {
-    alert("chrome url installed");
-});
+var NATIVE_MESSAGING_HOST = "com.erjoalgo.chrome_current_url";
 
-chrome.runtime.onStartup.addListener(function() {
-    var nativeMessagingHost = "com.erjoalgo.chrome_current_url";
-    var port = chrome.runtime.connectNative(nativeMessagingHost);
-
+function start ( ) {
+    var port = chrome.runtime.connectNative(NATIVE_MESSAGING_HOST);
     port.onMessage.addListener(function(msg) {
         console.log("Received" + msg);
     });
@@ -37,5 +33,14 @@ chrome.runtime.onStartup.addListener(function() {
     // chrome.runtime.onExit.addListener(function() {
     //     port.postMessage({ exit: true });
     // });
+}
+
+chrome.runtime.onInstalled.addListener(function() {
+    alert("chrome url installed!");
+    start();
 });
 
+chrome.runtime.onStartup.addListener(function() {
+    // console.log( "on startup..." );
+    start();
+});
