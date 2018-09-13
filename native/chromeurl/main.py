@@ -12,6 +12,8 @@ import json
 import time
 import argparse
 import logging
+import subprocess
+import re
 from flask import Flask
 from flask import request
 
@@ -39,6 +41,11 @@ def get_current_url():
         data = request.json
         url = data["url"]
         current_url = url
+        try:
+            subprocess.check_output(["emacsclient", "-e", "(stumpwm-eval (message \"{}\"))"
+                         .format(re.sub("\"", "\\\"", url))])
+        except:
+                pass
         return ""
         # except Exception as ex:
         #     logger.error("failed to parse post url request: {}".format(ex))
