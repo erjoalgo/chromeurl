@@ -14,6 +14,15 @@ function start ( mode ) {
 
     function postCurrentTabUrl (tabId) {
         chrome.tabs.get(tabId, function(tab){
+            // chrome.tabs.getCurrent(function(current){
+            chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+                var current = tabs.length>0 ? tabs[0]: null;
+                if ( (tab == null) != (current == null) || tab && tab.url != current.url ) {
+                    console.log( "current: " + (current? current.url : "undefined") );
+                    console.log( "requested: " + (tab? tab.url : "undefined") );
+                    console.log( "warn: not equal to the current tab. skipping..." );
+                } else  {
+                    tab = current;
             if (tab != null) {
                 var url = tab.url;
                 if (mode == "native") {
@@ -33,6 +42,8 @@ function start ( mode ) {
                     console.log("unknown mode: "+mode);
                 }
             }
+                }
+            });
         });
     }
 
