@@ -40,10 +40,14 @@ function start ( mode ) {
     }
 
     chrome.tabs.onActivated.addListener(function(activeInfo){
+        console.log("via activated");
         postCurrentTabUrl();
     });
 
     chrome.tabs.onUpdated.addListener(function(tabId, changeInfo){
+        console.log("via on updated");
+        console.log("changes: ");
+        console.log(changeInfo);
         postCurrentTabUrl();
     });
 
@@ -51,6 +55,7 @@ function start ( mode ) {
         if (windowId != chrome.windows.WINDOW_ID_NONE) {
             chrome.tabs.query({windowId: windowId, active: true}, function(tabs){
                 // assume there is always a tab if there is a current window
+                console.log("via on-focus changed");
                 postCurrentTabUrl();
             });
         }
@@ -59,6 +64,7 @@ function start ( mode ) {
     // set the current tab initially
     chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
         // assume there is always a tab if there is a current window
+        console.log("via startup");
         postCurrentTabUrl();
     });
 
