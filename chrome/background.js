@@ -14,7 +14,7 @@ function start ( mode ) {
 
     function postCurrentTabUrl (tabId) {
         chrome.tabs.get(tabId, function(tab){
-            // chrome.tabs.getCurrent(function(current){
+            // chrome.tabs.getCurrent(function(current){ this is the background page tab
             chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
                 var current = tabs.length>0 ? tabs[0]: null;
                 if ( (tab == null) != (current == null) || tab && tab.url != current.url ) {
