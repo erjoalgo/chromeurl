@@ -12,18 +12,12 @@ function start ( mode ) {
         console.log("Disconnected: "+chrome.runtime.lastError.message);
     });
 
-    function postCurrentTabUrl (tabId) {
-        chrome.tabs.get(tabId, function(tab){
-            // chrome.tabs.getCurrent(function(current){ this is the background page tab
-            chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-                var current = tabs.length>0 ? tabs[0]: null;
-                if ( (tab == null) != (current == null) || tab && tab.url != current.url ) {
-                    console.log( "current: " + (current? current.url : "undefined") );
-                    console.log( "requested: " + (tab? tab.url : "undefined") );
-                    console.log( "warn: not equal to the current tab. skipping..." );
-                } else  {
-                    tab = current;
-            if (tab != null) {
+    function postCurrentTabUrl () {
+        // chrome.tabs.getCurrent(function(current){ this is the background page tab
+        chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+            if (tabs.length>0) {
+                var tab = tabs[0];
+                // assert(tab);
                 var url = tab.url;
                 if (mode == "native") {
                     port.postMessage({ text: url });
@@ -42,20 +36,22 @@ function start ( mode ) {
                     console.log("unknown mode: "+mode);
                 }
             }
-                }
-            });
         });
     }
 
-    chrome.tabs.onActivated.addListener(function(activeInfo){postCurrentTabUrl(activeInfo.tabId)});
+    chrome.tabs.onActivated.addListener(function(activeInfo){
+        postCurrentTabUrl();
+    });
 
-    chrome.tabs.onUpdated.addListener(function(tabId){postCurrentTabUrl(tabId)});
+    chrome.tabs.onUpdated.addListener(function(tabId, changeInfo){
+        postCurrentTabUrl();
+    });
 
     chrome.windows.onFocusChanged.addListener(function(windowId){
         if (windowId != chrome.windows.WINDOW_ID_NONE) {
             chrome.tabs.query({windowId: windowId, active: true}, function(tabs){
                 // assume there is always a tab if there is a current window
-                postCurrentTabUrl(tabs[0].id);
+                postCurrentTabUrl();
             });
         }
     });
@@ -63,7 +59,7 @@ function start ( mode ) {
     // set the current tab initially
     chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
         // assume there is always a tab if there is a current window
-        postCurrentTabUrl(tabs[0].id);
+        postCurrentTabUrl();
     });
 
     // TODO shutdown native host process on exit
