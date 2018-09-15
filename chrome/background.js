@@ -44,7 +44,9 @@ function start ( mode ) {
     });
 
     chrome.tabs.onUpdated.addListener(function(tabId, changeInfo){
-        postCurrentTabUrl();
+        if (changeInfo.url != null) {
+            postCurrentTabUrl();
+        }
     });
 
     chrome.windows.onFocusChanged.addListener(function(windowId){
