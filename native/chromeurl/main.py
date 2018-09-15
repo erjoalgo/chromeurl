@@ -110,6 +110,7 @@ def main():
     port = args.port
 
     logger.info("starting native messaging stdin read loop...")
+    logger.info("version: {}".format(__version__))
 
     def kill_server(kill_url="http://localhost:{}/exit".format(port)):
         "kill a server at the specified kill url"
