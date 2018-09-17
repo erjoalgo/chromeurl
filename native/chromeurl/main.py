@@ -47,6 +47,10 @@ def get_current_url():
     else:
         logger.error("invalid method: {}".format(request.method))
 
+@app.route("/version")
+def version():
+    return __version__
+
 @app.route("/exit")
 def exit_request():
     "safely exit and free port for a newer process"
