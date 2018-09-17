@@ -59,10 +59,7 @@ function start ( mode ) {
     });
 
     // set the current tab initially
-    chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-        // assume there is always a tab if there is a current window
-        postCurrentTabUrl();
-    });
+    postCurrentTabUrl();
 
     // TODO shutdown native host process on exit
     // chrome.runtime.onExit.addListener(function() {
