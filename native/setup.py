@@ -35,7 +35,7 @@ def install_manifest():
         exit(1)
 
     host_name = "com.erjoalgo.chrome_current_url"
-    extension_id = "ekofhnkbloagjhkldkgjcbmfealemjnh"
+    extension_id = "eibefbdcoojolecpoehkpmgfaeapngjk"
 
     manifest = {
         "name": host_name,
