@@ -93,7 +93,28 @@ def install_native_host():
         logger.error("fatal: could not discover suitable native host installation directory")
         exit(1)
 
-_post_install = install_native_host
+def install_extension():
+    """install chrome external extension"""
+    EXTERNAL_EXTENSION_CANDIDATES = [
+        # https://developer.chrome.com/extensions/external_extensions
+        "~/Library/Application Support/Google/Chrome/External Extensions/",
+        "/Library/Application Support/Google/Chrome/External Extensions/",
+        "/opt/google/chrome/extensions/",
+        "/usr/share/google-chrome/extensions/",
+        "/usr/share/chromium/extensions/"
+    ]
+    CHROME_WEBSTORE_UPDATE_URL = "https://clients2.google.com/service/update2/crx"
+    manifest = {
+        "external_update_url": CHROME_WEBSTORE_UPDATE_URL
+    }
+
+    installed_manifests = install_manifest(EXTENSION_ID, manifest, EXTERNAL_EXTENSION_CANDIDATES)
+    if not installed_manifests:
+        WEBSTORE_URL = "https://chrome.google.com/webstore/detail/{}".format(EXTENSION_ID)
+        logger.warn("could not discover suitable external extension installation directory. "
+               "Install the extension from the chrome webstore: {}".format(WEBSTORE_URL))
+
+_post_install = lambda: (install_native_host(), install_extension())
 
 class new_install(install, object):
     def __init__(self, *args, **kwargs):
