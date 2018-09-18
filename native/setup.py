@@ -47,6 +47,8 @@ def install_manifest(filename_sans_ext, manifest_dict, directory_candidates,
     return installed_manifests
 
 
+EXTENSION_ID = "eibefbdcoojolecpoehkpmgfaeapngjk"
+
 def install_native_host():
     """install chrome native host manifest file"""
     NATIVE_HOST_CANDIDATES = [
@@ -72,7 +74,6 @@ def install_native_host():
     EXE_ABS = distutils.spawn.find_executable(EXE)
 
     host_name = "com.erjoalgo.chrome_current_url"
-    extension_id = "eibefbdcoojolecpoehkpmgfaeapngjk"
 
     manifest = {
         "name": host_name,
@@ -80,7 +81,7 @@ def install_native_host():
         "path": EXE_ABS,
         "type": "stdio",
         "allowed_origins": [
-            "chrome-extension://{}/".format(extension_id)
+            "chrome-extension://{}/".format(EXTENSION_ID)
         ]
     }
     installed_manifests = install_manifest(host_name, manifest, NATIVE_HOST_CANDIDATES)
