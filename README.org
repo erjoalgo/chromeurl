@@ -15,10 +15,9 @@
   $ curl http://127.0.0.1:19615/tabs/current/url
   https://developer.chrome.com/extensions/activeTab
   #+END_SRC
-- Macos, Windows
-  - not yet supported
 - security
   - Any local process may read the user's current url
+- Windows installation not supported
 - debugging
   - start chromium from a terminal to see debug messages
   - navigate to the extension background from page chrome://extensions
