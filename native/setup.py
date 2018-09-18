@@ -71,14 +71,14 @@ def install_native_host():
         "~/.config/chromium/NativeMessagingHosts/"
     ]
 
-    EXE_ABS = distutils.spawn.find_executable(EXE)
+    exe_abs = distutils.spawn.find_executable(EXE)
 
     host_name = "com.erjoalgo.chrome_current_url"
 
     manifest = {
         "name": host_name,
         "description": "chrome current url native host component",
-        "path": EXE_ABS,
+        "path": exe_abs,
         "type": "stdio",
         "allowed_origins": [
             "chrome-extension://{}/".format(EXTENSION_ID)
