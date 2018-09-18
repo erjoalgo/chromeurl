@@ -21,4 +21,4 @@
 - debugging
   - start chromium from a terminal to see debug messages
   - navigate to the extension background from page chrome://extensions
-    to see log messages
+    to see background page log messages
