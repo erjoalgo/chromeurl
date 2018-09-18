@@ -17,6 +17,8 @@
   #+END_SRC
 - Macos, Windows
   - not yet supported
+- security
+  - Any local process may read the user's current url
 - debugging
   - start chromium from a terminal to see debug messages
   - navigate to the extension background from page chrome://extensions
