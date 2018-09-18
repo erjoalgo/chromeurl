@@ -13,5 +13,8 @@
         "nativeMessaging",
         "http://*/",
         "https://*/"
-    ]
+    ],
+    "icons": {
+        "512": "link-512.png"
+    }
 }
