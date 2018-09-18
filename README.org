@@ -1,24 +1,25 @@
-- install native component
-  : pip install chromeurl
+- installing
+  - install native component
+    : pip install chromeurl
   - alternatively
     #+BEGIN_SRC sh
     $ cd native
     $ python setup.py install --user
     #+END_SRC
-- install extension
-  - from the [[https://chrome.google.com/webstore/detail/chrome-current-url/eibefbdcoojolecpoehkpmgfaeapngjk][chrome web store]]:
-  - alternatively
-    - navigate to ~chrome://extensions/~
-    - ~load unpacked~ extension rooted at ~./chrome~
-- make REST call to get current url
-  #+BEGIN_SRC sh
-  $ curl http://127.0.0.1:19615/tabs/current/url
-  https://developer.chrome.com/extensions/activeTab
-  #+END_SRC
-- security
-  - Any local process may read the user's current url
-- Windows installation not supported
+  - install extension
+    - from the [[https://chrome.google.com/webstore/detail/chrome-current-url/eibefbdcoojolecpoehkpmgfaeapngjk][chrome web store]]:
+    - alternatively
+      - navigate to ~chrome://extensions/~
+      - ~load unpacked~ extension rooted at ~./chrome~
+  - make REST call to get current url
+    #+BEGIN_SRC sh
+    $ curl http://127.0.0.1:19615/tabs/current/url
+    https://developer.chrome.com/extensions/activeTab
+    #+END_SRC
+  - Windows installation not supported
 - debugging
-  - start chromium from a terminal to see debug messages
+  - start chromium from a terminal to see native host debug messages
   - navigate to the extension background from page chrome://extensions
     to see background page log messages
+- security
+  - Any local process may read the user's current url
