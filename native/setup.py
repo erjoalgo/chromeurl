@@ -18,8 +18,38 @@ VERSION = re.search("[0-9.]+", read("chromeurl/version.py")).group(0)
 EXE = "chromeurl"
 PACKAGE = "chromeurl"
 
-def install_native_host(manifest):
-    DIRECTORY_CANDIDATES = [
+def install_manifest(filename_sans_ext, manifest_dict, directory_candidates,
+                     max_installations=float("inf")):
+    installed_manifests = []
+    for cand_maybe_tilde in directory_candidates:
+        if len(installed_manifests) > max_installations:
+            break
+        cand = os.path.expanduser(cand_maybe_tilde)
+        parent = os.path.dirname(cand)
+        print("\tconsidering {}".format(cand))
+        if not os.path.exists(cand) and os.path.exists(parent):
+            # if parent exists, this could be the first native messaging host
+            try:
+                os.mkdir(cand)
+            except Exception as ex:
+                print("unable to mkdir {}: {}".format(cand, ex))
+
+        if os.path.exists(cand):
+            manifest_path = os.path.join(cand, "{}.json".format(filename_sans_ext))
+            try:
+                with open(manifest_path, "w") as fh:
+                    json.dump(manifest_dict, fh, indent=4)
+                    installed_manifests.append(manifest_path)
+                    print("installed manifest at: {}".format(manifest_path))
+            except Exception as ex:
+                print("\tfailed to install manifest at {}:\n\t {}"
+                             .format(manifest_path, ex))
+    return installed_manifests
+
+
+def install_native_host():
+    """install chrome native host manifest file"""
+    NATIVE_HOST_CANDIDATES = [
         # https://developer.chrome.com/extensions/nativeMessaging
 
         # OS X (system-wide)
@@ -39,37 +69,6 @@ def install_native_host(manifest):
         "~/.config/chromium/NativeMessagingHosts/"
     ]
 
-    NAME = manifest["name"]
-
-    installed_manifests = []
-    for cand_maybe_tilde in DIRECTORY_CANDIDATES:
-        cand = os.path.expanduser(cand_maybe_tilde)
-        parent = os.path.dirname(cand)
-        print ("considering {}".format(cand))
-
-        if not os.path.exists(cand) and os.path.exists(parent):
-            # if parent exists, this could be the first native messaging host
-            try:
-                os.mkdir(cand)
-            except Exception as ex:
-                print ("unable to mkdir {}: {}".format(cand, ex))
-
-        if os.path.exists(cand):
-            manifest_path = os.path.join(cand, "{}.join".format(NAME))
-            try:
-                with open(manifest_path, "w") as fh:
-                    json.dump(manifest, fh, indent=4)
-                    installed_manifests.append(manifest_path)
-                    print ("installed native messaging host at: {}"
-                           .format(manifest_path))
-            except Exception as ex:
-                print ("warning: failed to install manifest at {}:\n\t {}"
-                       .format(manifest_path, ex))
-
-    return installed_manifests
-
-def install_manifest():
-    """install chrome native host manifest file"""
     EXE_ABS = distutils.spawn.find_executable(EXE)
 
     host_name = "com.erjoalgo.chrome_current_url"
@@ -84,12 +83,12 @@ def install_manifest():
             "chrome-extension://{}/".format(extension_id)
         ]
     }
-    installed_manifests = install_native_host(manifest)
+    installed_manifests = install_manifest(host_name, manifest, NATIVE_HOST_CANDIDATES)
     if not installed_manifests:
         print ("could not discover suitable installation directory")
         exit(1)
 
-_post_install = install_manifest
+_post_install = install_native_host
 
 class new_install(install, object):
     def __init__(self, *args, **kwargs):
