@@ -112,7 +112,7 @@ def install_extension():
     if not installed_manifests:
         WEBSTORE_URL = "https://chrome.google.com/webstore/detail/{}".format(EXTENSION_ID)
         logger.warn("could not discover suitable external extension installation directory. "
-               "Install the extension from the chrome webstore: {}".format(WEBSTORE_URL))
+               "Install the extension manually from the chrome webstore: {}".format(WEBSTORE_URL))
 
 _post_install = lambda: (install_native_host(), install_extension())
 
