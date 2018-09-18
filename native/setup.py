@@ -1,11 +1,10 @@
 import os
 import re
-import subprocess
 import json
-from setuptools.command.install import install
 import atexit
-from setuptools import setup
 import distutils.spawn
+from setuptools.command.install import install
+from setuptools import setup
 
 # Utility function to read the README file.
 # Used for the long_description.  It's nice, because now 1) we have a top level
@@ -71,7 +70,7 @@ def install_native_host(manifest):
 
 def install_manifest():
     """install chrome native host manifest file"""
-    EXE_ABS=distutils.spawn.find_executable(EXE)
+    EXE_ABS = distutils.spawn.find_executable(EXE)
 
     host_name = "com.erjoalgo.chrome_current_url"
     extension_id = "eibefbdcoojolecpoehkpmgfaeapngjk"
@@ -90,7 +89,7 @@ def install_manifest():
         print ("could not discover suitable installation directory")
         exit(1)
 
-_post_install=install_manifest
+_post_install = install_manifest
 
 class new_install(install, object):
     def __init__(self, *args, **kwargs):
