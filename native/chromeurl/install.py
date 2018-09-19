@@ -7,6 +7,7 @@ import sys
 
 
 EXE_ABS = sys.argv[0]
+HOST_NAME = "com.erjoalgo.chrome_current_url"
 
 logging.basicConfig()
 logger = logging.getLogger('chromeurl-installer')
@@ -63,10 +64,8 @@ def install_native_host(extension_id):
         "~/.config/chromium/NativeMessagingHosts/"
     ]
 
-    host_name = "com.erjoalgo.chrome_current_url"
-
     manifest = {
-        "name": host_name,
+        "name": HOST_NAME,
         "description": "chrome current url native host component",
         "path": EXE_ABS,
         "type": "stdio",
@@ -74,7 +73,7 @@ def install_native_host(extension_id):
             "chrome-extension://{}/".format(extension_id)
         ]
     }
-    installed_manifests = install_manifest(host_name, manifest, NATIVE_HOST_CANDIDATES)
+    installed_manifests = install_manifest(HOST_NAME, manifest, NATIVE_HOST_CANDIDATES)
     if not installed_manifests:
         logger.error("fatal: could not discover suitable native host installation directory")
         exit(1)
