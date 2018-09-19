@@ -74,6 +74,14 @@ def read_native_messages_loop(fh, log_fh):
     "continuously read chrome extension messages"
     global current_url
 
+    def sendmsg(msg):
+        msg_len_packed = struct.pack("i", len(msg))
+        fh = sys.stdout
+        fh.write(msg_len_packed)
+        fh.write(msg)
+        fh.flush()
+
+    sendmsg("connected!")
     while True:
         msg_len_packed = fh.read(4)
         if not msg_len_packed:
