@@ -14,6 +14,7 @@ import argparse
 import logging
 import urllib
 import struct
+import traceback
 from . import install
 from flask import Flask
 from flask import request
@@ -94,6 +95,12 @@ def read_native_messages_loop(fh, log_fh):
 
         msg = fh.read(msg_len)
         logger.debug("message is %s", msg)
+        try:
+            data = json.loads(msg)
+        except Exception as ex:
+            traceback.print_exc()
+            logger.error("unable to parse json: {}".format(msg))
+            continue
 
         if "shutdown" in data:
             send_shutdown_request()
