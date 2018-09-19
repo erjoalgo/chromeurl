@@ -22,9 +22,12 @@ from flask import request
 logging.basicConfig()
 logger = logging.getLogger('chromeurl')
 
-with open("/tmp/chromeurl-run.log", "a") as fh:
-    from datetime import datetime
-    print ("ran on {}".format(datetime.now()), file=fh)
+try:
+    from .version import __version__
+except:
+    logger.error("unable to determine version")
+    __version__ = "unknown"
+
 
 app = Flask(__name__)
 port = None
