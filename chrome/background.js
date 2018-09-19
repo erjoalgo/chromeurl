@@ -19,7 +19,7 @@ function start ( mode ) {
                 var tab = tabs[0];
                 // assert(tab);
                 var url = tab.url;
-                if (mode == "native") {
+                if (mode == "stdin") {
                     port.postMessage({ text: url });
                 } else if (mode == "http") {
                     var xhr = new XMLHttpRequest();
@@ -67,6 +67,7 @@ function start ( mode ) {
     // });
 }
 
+// var MODE = "stdin";
 var MODE = "http";
 chrome.runtime.onInstalled.addListener(function() {
     start(MODE);
