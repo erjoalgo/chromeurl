@@ -3,12 +3,10 @@
 import os
 import json
 import logging
-import distutils.spawn
+import sys
 
 
-
-EXE_NAME = "chromeurl"
-EXE_ABS = distutils.spawn.find_executable(EXE_NAME)
+EXE_ABS = sys.argv[0]
 
 logging.basicConfig()
 logger = logging.getLogger('chromeurl-installer')
