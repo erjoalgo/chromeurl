@@ -12,6 +12,7 @@ import json
 import time
 import argparse
 import logging
+import urllib
 import struct
 from . import install
 from flask import Flask
@@ -28,8 +29,9 @@ except:
 
 
 app = Flask(__name__)
-
+port = None
 current_url = None
+
 @app.route("/tabs/current/url", methods=["GET", "POST"])
 def get_current_url():
     "echo current url"
@@ -53,18 +55,25 @@ def get_current_url():
 def version():
     return __version__
 
-@app.route("/exit")
-def exit_request():
-    "safely exit and free port for a newer process"
+@app.route("/shutdown")
+def shutdown_request():
+    "gracefully shutdown and free port for a newer process"
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
-    print ("got exit request. exiting...")
+    print ("got shutdown request. shutting down...")
     func()
     # sys.exit(0)
     return 'Server shutting down...'
 
-def read_native_messages_loop(fh, log_fh, kill_server=None):
+def send_shutdown_request():
+    "shutdown a previously running server"
+    shutdown_url = "http://localhost:{}/shutdown".format(port)
+    print ("attempting to shut down an existing service via {}..."
+           .format(shutdown_url))
+    urllib.urlretrieve(shutdown_url)
+
+def read_native_messages_loop(fh, log_fh):
     "continuously read chrome extension messages"
     global current_url
 
@@ -81,22 +90,23 @@ def read_native_messages_loop(fh, log_fh, kill_server=None):
         msg = fh.read(msg_len)
         logger.debug("message is %s", msg)
 
-        data = json.loads(msg)
-        if "exit" in data:
-            kill_server()
-            return
-
-        url = data["text"]
-        logger.debug("the url is %s", url)
-
-        current_url = url
-        if log_fh:
-            print(url, file=log_fh)
-            log_fh.flush()
+        if "shutdown" in data:
+            send_shutdown_request()
+            break
+        elif not "text" in data:
+            logger.error("missing 'text' key: {}".format(data))
+        else:
+            url = data["text"]
+            logger.debug("the url is %s", url)
+            current_url = url
+            if log_fh:
+                print(url, file=log_fh)
+                log_fh.flush()
 
 EXTENSION_PUBLISHED_ID = "eibefbdcoojolecpoehkpmgfaeapngjk"
 def main():
     "entry point"
+    global port
     # don't write anything to stdout
     # real_stdout = sys.stdout
     sys.stdout = sys.stderr
@@ -130,14 +140,8 @@ def main():
     logger.info("starting native messaging stdin read loop...")
     logger.info("version: {}".format(__version__))
 
-    def kill_server(kill_url="http://localhost:{}/exit".format(port)):
-        "kill a server at the specified kill url"
-        import urllib
-        print ("attempting to kill an existing service via {}...".format(kill_url))
-        urllib.urlretrieve(kill_url)
-
     try:
-        kill_server()
+        send_shutdown_request()
         time.sleep(2)
     except:
         # normally the server isn't running, so this is ok
@@ -146,7 +150,7 @@ def main():
     logger.info("starting native messaging stdin read loop...")
     log_fh = open(args.log, "w") if args.log else None
     read_loop_thread = Thread(target=read_native_messages_loop,
-                              args=(sys.stdin, log_fh, kill_server))
+                              args=(sys.stdin, log_fh))
     read_loop_thread.setDaemon(True)
     read_loop_thread.start()
 
