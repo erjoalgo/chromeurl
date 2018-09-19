@@ -1,25 +1,49 @@
+#+OPTIONS: ^:nil
+#+OPTIONS: toc:nil
+#+OPTIONS: html-postamble:nil
+#+OPTIONS: num:nil
+#+TITLE: Chrome Url Extension
+
 - installing
-  - install native component
-    : pip install chromeurl
-  - alternatively
-    #+BEGIN_SRC sh
-    $ cd native
-    $ python setup.py install --user
-    #+END_SRC
-  - install extension
-    - from the [[https://chrome.google.com/webstore/detail/chrome-current-url/eibefbdcoojolecpoehkpmgfaeapngjk][chrome web store]]:
+  1. native component
+    - from pip
+       #+BEGIN_SRC sh
+       $ pip install chromeurl
+       #+END_SRC
+    - from the source tree
+       #+BEGIN_SRC sh
+       $ cd native
+       $ python setup.py install --user
+       #+END_SRC
+  1. install the extension
+    - manually from the [[https://chrome.google.com/webstore/detail/chrome-current-url/eibefbdcoojolecpoehkpmgfaeapngjk][chrome web store]]
+    - automatically from the web store (requires root privileges)
+       #+BEGIN_SRC sh
+       $ chromeurl --install extension
+       #+END_SRC
     - alternatively
-      - navigate to ~chrome://extensions/~
-      - ~load unpacked~ extension rooted at ~./chrome~
-  - make REST call to get current url
-    #+BEGIN_SRC sh
-    $ curl http://127.0.0.1:19615/tabs/current/url
-    https://developer.chrome.com/extensions/activeTab
-    #+END_SRC
-  - Windows installation not supported
-- debugging
+      - navigate to ~chrome://extensions/ -> Load Unpacked~
+      - select the extension directory rooted at ~./chrome~
+      - note the extension id as EXTENSION_UNPACKED_ID
+  1. install the native host manifest
+    - if extension came from the webstore
+      #+BEGIN_SRC sh
+      $ chromeurl --install native
+      #+END_SRC
+    - if unpacked locally:
+      #+BEGIN_SRC sh
+      $ chromeurl <EXTENSION_UNPACKED_ID> --install native
+      #+END_SRC
+
+  - Get current url
+    - While chrome is running, make a REST call to get current url
+      #+BEGIN_SRC sh
+      $ curl http://127.0.0.1:19615/tabs/current/url
+      https://developer.chrome.com/extensions/activeTab
+      #+END_SRC
+- Debugging
   - start chromium from a terminal to see native host debug messages
   - navigate to the extension background from page chrome://extensions
     to see background page log messages
-- security
+- Security
   - Any local process may read the user's current url
