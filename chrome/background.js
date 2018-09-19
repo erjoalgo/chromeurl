@@ -69,7 +69,6 @@ function start ( mode ) {
 
 var MODE = "http";
 chrome.runtime.onInstalled.addListener(function() {
-    alert("chrome url installed!");
     start(MODE);
 });
 
