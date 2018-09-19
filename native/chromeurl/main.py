@@ -50,7 +50,12 @@ def get_current_url():
 
 @app.route("/version")
 def version():
-    return __version__
+    try:
+        from .version import __version__
+        return __version__
+    except Exception as ex:
+        logger.error("unable to determine version: {}".format(ex))
+        return "unknown"
 
 @app.route("/shutdown")
 def shutdown_request():
@@ -113,7 +118,7 @@ def main():
     parser.add_argument("--install", choices=["all", "native", "extension"])
     parser.add_argument("-p", "--port", default=19615)
     parser.add_argument("--log", help="optionally log urls to a file")
-    parser.add_argument("--version", action="version", version=__version__)
+    parser.add_argument("--version", action="version", version=version())
     parser.add_argument("-v", "--verbose", action="store_true")
 
     args = parser.parse_args()
@@ -135,7 +140,7 @@ def main():
     port = args.port
 
     logger.info("starting native messaging stdin read loop...")
-    logger.info("version: {}".format(__version__))
+    logger.info("version: {}".format(version()))
 
     try:
         send_shutdown_request()
