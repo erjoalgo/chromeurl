@@ -67,8 +67,8 @@ function start ( mode ) {
     // });
 }
 
-// var MODE = "stdin";
-var MODE = "http";
+// var MODE = "http";
+var MODE = "stdin";
 chrome.runtime.onInstalled.addListener(function() {
     start(MODE);
 });
