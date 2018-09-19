@@ -95,6 +95,7 @@ def read_native_messages_loop(fh, log_fh, kill_server=None):
             print(url, file=log_fh)
             log_fh.flush()
 
+EXTENSION_PUBLISHED_ID = "eibefbdcoojolecpoehkpmgfaeapngjk"
 def main():
     "entry point"
     # don't write anything to stdout
@@ -102,7 +103,7 @@ def main():
     sys.stdout = sys.stderr
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("extension_id", nargs="?", default="eibefbdcoojolecpoehkpmgfaeapngjk")
+    parser.add_argument("extension_id", nargs="?", default=EXTENSION_PUBLISHED_ID)
     parser.add_argument("--install", choices=["all", "native", "extension"])
     parser.add_argument("-p", "--port", default=19615)
     parser.add_argument("--log", help="optionally log urls to a file")
