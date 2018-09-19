@@ -12,6 +12,7 @@ import json
 import time
 import argparse
 import logging
+from . import install
 from flask import Flask
 from flask import request
 
@@ -101,7 +102,8 @@ def main():
     sys.stdout = sys.stderr
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("extension_id") # chromium passes this positional arg on startup
+    parser.add_argument("extension_id", nargs="?", default="eibefbdcoojolecpoehkpmgfaeapngjk")
+    parser.add_argument("--install", choices=["all", "native", "extension"])
     parser.add_argument("-p", "--port", default=19615)
     parser.add_argument("--log", help="optionally log urls to a file")
     parser.add_argument("--version", action="version", version=__version__)
@@ -111,6 +113,18 @@ def main():
 
     if args.verbose:
         logger.setLevel(logging.DEBUG)
+
+    if args.install:
+        if args.install == "all":
+            install.install_all(args.extension_id)
+        elif args.install == "native":
+            install.install_native_host(args.extension_id)
+        elif args.install == "extension":
+            install.install_extension(args.extension_id)
+        else:
+            assert(False)
+        return
+
     port = args.port
 
     logger.info("starting native messaging stdin read loop...")
