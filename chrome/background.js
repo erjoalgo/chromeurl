@@ -10,6 +10,7 @@ function start ( mode ) {
     port.onDisconnect.addListener(function() {
         console.log("Disconnected");
         console.log("Disconnected: "+chrome.runtime.lastError.message);
+        alert("chrome-url: Disconnected: "+chrome.runtime.lastError.message);
     });
 
     function postCurrentTabUrl () {
