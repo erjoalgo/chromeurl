@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-ZIP=chrome-current-url.zip
-
+rm chrome-current-url*.zip
+ZIP=chrome-current-url-$(date -I).zip
 cd chrome
 zip -r ${ZIP} *
 mv ${ZIP} ..
