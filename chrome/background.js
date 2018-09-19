@@ -74,5 +74,6 @@ chrome.runtime.onInstalled.addListener(function() {
 });
 
 chrome.runtime.onStartup.addListener(function() {
+    // console.log( "on startup..." );
     start(MODE);
 });

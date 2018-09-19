@@ -41,10 +41,6 @@ def get_current_url():
         url = data["url"]
         current_url = url
         return ""
-        # except Exception as ex:
-        #     logger.error("failed to parse post url request: {}".format(ex))
-        #     return str(ex), 500
-        #     # traceback.print_exc()
     else:
         logger.error("invalid method: {}".format(request.method))
 
@@ -65,7 +61,6 @@ def shutdown_request():
         raise RuntimeError('Not running with the Werkzeug Server')
     print ("got shutdown request. shutting down...")
     func()
-    # sys.exit(0)
     return 'Server shutting down...'
 
 def send_shutdown_request():
@@ -114,7 +109,8 @@ def main():
     sys.stdout = sys.stderr
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("extension_id", nargs="?", default=EXTENSION_PUBLISHED_ID)
+    parser.add_argument("extension_id", nargs="?",
+                        default=EXTENSION_PUBLISHED_ID)
     parser.add_argument("--install", choices=["all", "native", "extension"])
     parser.add_argument("-p", "--port", default=19615)
     parser.add_argument("--log", help="optionally log urls to a file")
