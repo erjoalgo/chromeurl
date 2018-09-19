@@ -12,6 +12,7 @@ import json
 import time
 import argparse
 import logging
+import struct
 from . import install
 from flask import Flask
 from flask import request
@@ -68,16 +69,14 @@ def read_native_messages_loop(fh, log_fh, kill_server=None):
     global current_url
 
     while True:
-        msg_len_str = fh.read(4)
-        if not msg_len_str:
-            logger.debug("got message of length 0?")
+        msg_len_packed = fh.read(4)
+        if not msg_len_packed:
+            logger.debug("got empty message length?")
             time.sleep(.5)
             continue
 
-        # platform dependent?
-        msg_len = sum(ord(b)<<(8*(i)) for(i, b) in enumerate(msg_len_str))
-
-        logger.debug("got message of length: %s %s", msg_len, (msg_len_str, len(msg_len_str)))
+        msg_len = struct.unpack("i", msg_len_packed)[0]
+        logger.debug("got message of length: %s", msg_len)
 
         msg = fh.read(msg_len)
         logger.debug("message is %s", msg)
