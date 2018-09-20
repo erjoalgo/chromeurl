@@ -4,8 +4,8 @@
 #+OPTIONS: num:nil
 #+TITLE: Chrome Url Extension
 
-- installing
-  1. native component
+* Installing
+  1. Native component
     - from pip
        #+BEGIN_SRC sh
        $ pip install chromeurl
@@ -15,17 +15,17 @@
        $ cd native
        $ python setup.py install --user
        #+END_SRC
-  1. install the extension
+  1. Extension
     - manually from the [[https://chrome.google.com/webstore/detail/chrome-current-url/eibefbdcoojolecpoehkpmgfaeapngjk][chrome web store]]
-    - automatically from the web store (requires root privileges)
+    - automatically from the web store (may require root privileges)
        #+BEGIN_SRC sh
        $ chromeurl --install extension
        #+END_SRC
     - alternatively
-      - navigate to ~chrome://extensions/ -> Load Unpacked~
-      - select the extension directory rooted at ~./chrome~
+      - navigate to ~chrome://extensions/~
+      - ~Load Unpacked~ the extension directory rooted at ~./chrome~
       - note the extension id as EXTENSION_UNPACKED_ID
-  1. install the native host manifest
+  1. Native host manifest
     - if extension came from the webstore
       #+BEGIN_SRC sh
       $ chromeurl --install native
@@ -35,15 +35,15 @@
       $ chromeurl <EXTENSION_UNPACKED_ID> --install native
       #+END_SRC
 
-  - Get current url
+** Get current url
     - While chrome is running, make a REST call to get current url
       #+BEGIN_SRC sh
       $ curl http://127.0.0.1:19615/tabs/current/url
       https://developer.chrome.com/extensions/activeTab
       #+END_SRC
-- Debugging
-  - start chromium from a terminal to see native host debug messages
-  - navigate to the extension background from page chrome://extensions
-    to see background page log messages
-- Security
-  - Any local process may read the user's current url
+** Debugging
+   - start chromium from a terminal to see native host debug messages
+   - navigate to the extension background from page chrome://extensions
+     to see background page log messages
+** Security
+   - Any local process may read the user's current url
