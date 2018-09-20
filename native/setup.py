@@ -12,11 +12,10 @@ def read(fname):
 
 VERSION = re.search("[0-9.]+", read("chromeurl/version.py")).group(0)
 
-EXE = "chromeurl"
-PACKAGE = "chromeurl"
+NAME = EXE = PACKAGE = "chromeurl"
 
 setup(
-    name="chromeurl",
+    name=NAME,
     version=VERSION,
     author="Ernesto Alfonso",
     author_email="erjoalgo@gmail.com",
