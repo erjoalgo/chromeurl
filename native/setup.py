@@ -22,7 +22,7 @@ setup(
     description=("native messaging host component of chrome current url extension. "
                  "exposes the current chrome browser url via a REST endpoint"),
     license="GPLv3",
-    keywords="chrome chromium url",
+    keywords="chrome chromium url native",
     url="https://github.com/erjoalgo/chrome-current-url",
     packages=[PACKAGE],
     # long_description=read('README'),
