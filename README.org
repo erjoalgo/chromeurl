@@ -5,7 +5,7 @@
 #+TITLE: Chrome Url Extension
 
 * Installing
-  1. Native component
+  - Obtain the chrome native component (python package). Options:
     - from pip
        #+BEGIN_SRC sh
        $ pip install chromeurl
@@ -15,17 +15,17 @@
        $ cd native
        $ python setup.py install --user
        #+END_SRC
-  1. Extension
-    - manually from the [[https://chrome.google.com/webstore/detail/chrome-current-url/eibefbdcoojolecpoehkpmgfaeapngjk][chrome web store]]
+  - Install the extension. Options:
+    - manually from the [[https://chrome.google.com/webstore/detail/chrome-current-url/eibefbdcoojolecpoehkpmgfaeapngjk][chrome web store]] (preferred)
     - automatically from the web store (may require root privileges)
        #+BEGIN_SRC sh
        $ chromeurl --install extension
        #+END_SRC
-    - alternatively
+    - from local source tree
       - navigate to ~chrome://extensions/~
       - ~Load Unpacked~ the extension directory rooted at ~./chrome~
       - note the extension id as EXTENSION_UNPACKED_ID
-  1. Native host manifest
+  - Native host manifest (make chrome aware of the native host). Options:
     - if extension came from the webstore
       #+BEGIN_SRC sh
       $ chromeurl --install native
@@ -36,14 +36,14 @@
       #+END_SRC
 
 ** Get current url
-    - While chrome is running, make a REST call to get current url
+    - While chrome is running, make an HTTP request to get current url
       #+BEGIN_SRC sh
       $ curl http://127.0.0.1:19615/tabs/current/url
       https://developer.chrome.com/extensions/activeTab
       #+END_SRC
 ** Debugging
    - start chromium from a terminal to see native host debug messages
-   - navigate to the extension background from page chrome://extensions
+   - navigate to the extension background from page (chrome://extensions)
      to see background page log messages
 ** Security
    - Any local process may read the user's current url
