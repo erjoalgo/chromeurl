@@ -70,12 +70,6 @@ function start ( mode ) {
             });
         }
     });
-
-
-    // TODO shutdown native host process on exit
-    // chrome.runtime.onExit.addListener(function() {
-    //     port.postMessage({ exit: true });
-    // });
     // set the current tab on startup
     postCurrentTabUrl();
 }
