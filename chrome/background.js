@@ -16,7 +16,7 @@ function start ( mode ) {
     function postMessage ( path, data, mode )  {
         if (mode == "stdin") {
             port.postMessage({path: path, data: data});
-        } if (mode == "http") {
+        } else if (mode == "http") {
             var xhr = new XMLHttpRequest();
             xhr.open('POST', CHROME_INFO_SERVICE + path, true);
             xhr.setRequestHeader('Content-type', 'application/json');
