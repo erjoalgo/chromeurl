@@ -32,16 +32,19 @@ current_url = None
 
 
 def shutdown():
+    """Shuts down the service process via a unix signal."""
     os.kill(os.getpid(), signal.SIGTERM)
 
 
 def set_current_url(new_url):
+    """Updates the current url."""
     global current_url
     current_url = new_url
     logging.debug("updated current_url to %s", current_url)
 
 
 def get_current_url():
+    """Retrieves the current url."""
     return current_url
 
 
@@ -49,6 +52,7 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
     """A web server to serve info about a chrome browser instance."""
 
     def respond(self, status, body):
+        """Sends an http response."""
         self.send_response(status)
         self.send_header("Content-type", "text/plain")
         self.end_headers()
@@ -124,18 +128,11 @@ class ChromeInfoService(object):
                 self.send_shutdown_request()
             except requests.exceptions.ConnectionError as ex:
                 logging.info("error shutting down previous service: %s", ex)
-                # normally the server isn't running, so this is ok
-                pass
             time.sleep(2)
         server_address = ('', self.port)
-        # self.httpd = HTTPServer(server_address, self.__class__)
         self.httpd = http.server.HTTPServer(server_address, ChromeInfoServiceHandler)
         logging.info("starting http server on %s", server_address)
-        try:
-            self.httpd.serve_forever()
-        except ServerShutdown:
-            self.httpd.shutdown()
-            sys.exit(0)
+        self.httpd.serve_forever()
 
 
 class NativeMessagesLoop(object):
@@ -158,7 +155,7 @@ class NativeMessagesLoop(object):
         """Read the next message sent by the extension."""
         text_length_bytes = self.input_fh.read(4)
         logging.debug("raw 4: %s", text_length_bytes)
-        if len(text_length_bytes) == 0:
+        if not text_length_bytes:
             # this means exit
             shutdown()
 
@@ -225,21 +222,24 @@ class Installer(object):
             logging.debug("\tconsidering %s", cand)
             if not os.path.exists(cand) and os.path.exists(parent):
                 # if parent exists, this could be the first native messaging host
+                # so try to mkdir.
                 try:
                     os.mkdir(cand)
                 except OSError as ex:
                     logging.info("unable to mkdir %s: %s", cand, ex)
+                    continue
 
-            if os.path.exists(cand):
-                manifest_path = os.path.join(cand, "{}.json".format(filename_sans_ext))
-                try:
-                    with open(manifest_path, "w") as fh:
-                        json.dump(manifest_dict, fh, indent=4)
-                        installed_manifests.append(manifest_path)
-                        logging.info("installed manifest at: %s", manifest_path)
-                except OSError as ex:
-                    logging.info("\tfailed to install manifest at %s:\n\t %s",
-                                 manifest_path, ex)
+            manifest_path = os.path.join(cand, "{}.json".format(filename_sans_ext))
+            try:
+                with open(manifest_path, "w") as manifest_fh:
+                    json.dump(manifest_dict, manifest_fh, indent=4)
+            except OSError as ex:
+                logging.info("\tfailed to install manifest at %s:\n\t %s",
+                             manifest_path, ex)
+                continue
+            installed_manifests.append(manifest_path)
+            logging.info("installed manifest at: %s", manifest_path)
+
         return installed_manifests
 
     def install_native_host(self):
@@ -352,7 +352,7 @@ def main():
 
     logging.info("version: %s", __version__)
     native_loop = NativeMessagesLoop(
-        # reopen sys.stdin, sys.stdout as binary to avoid utl errors.
+        # reopen sys.stdin, sys.stdout as binary to avoid utf errors.
         input_fh=open(0, "rb"), output_fh=open(1, "wb"))
     read_loop_thread = threading.Thread(target=native_loop.start)
     read_loop_thread.setDaemon(True)
