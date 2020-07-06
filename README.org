@@ -28,11 +28,11 @@
   - Native host manifest (make chrome aware of the native host). Options:
     - if extension came from the webstore
       #+BEGIN_SRC sh
-      $ chromeurl --install native
+      $ sudo chromeurl --install native
       #+END_SRC
-    - if unpacked locally:
+    - if unpacked locally and loaded from source:
       #+BEGIN_SRC sh
-      $ chromeurl <EXTENSION_UNPACKED_ID> --install native
+      $ sudo chromeurl --install native --extension-id <EXTENSION_UNPACKED_ID>
       #+END_SRC
 
 ** Get current url
