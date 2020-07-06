@@ -76,6 +76,7 @@ function start ( mode ) {
 
 // var MODE = "http";
 var MODE = "stdin";
+
 chrome.runtime.onInstalled.addListener(function() {
     start(MODE);
 });
@@ -84,3 +85,4 @@ chrome.runtime.onStartup.addListener(function() {
     // console.log( "on startup..." );
     start(MODE);
 });
+// TODO lint
