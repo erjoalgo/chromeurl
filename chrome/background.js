@@ -1,4 +1,4 @@
-var POST_CURRENT_TAB_URL_SERVICE = "http://localhost:19615/tabs/current/url";
+var CHROME_INFO_SERVICE = "http://localhost:19615";
 var NATIVE_MESSAGING_HOST = "com.erjoalgo.chrome_current_url";
 
 function start ( mode ) {
@@ -13,30 +13,42 @@ function start ( mode ) {
         alert("chrome-url: Disconnected: "+chrome.runtime.lastError.message);
     });
 
+    function postMessage ( path, data, mode )  {
+        if (mode == "stdin") {
+            port.postMessage({path: path, data: data});
+        } if (mode == "http") {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', CHROME_INFO_SERVICE + path, true);
+            xhr.setRequestHeader('Content-type', 'application/json');
+            xhr.onreadystatechange = function() {
+                if(xhr.readyState == 4) {
+                    if (xhr.status != 200) {
+                        var msg = (
+                            "failed to update current tab url: "
+                                + xhr.status+ " " + xhr.responseText)
+                        console.log(msg);
+                        alert(msg);
+                    } else   {
+                        console.log("posted url");
+                    }
+                }
+            }
+            if (data)  {
+                xhr.send(JSON.stringify(data));
+            }
+        } else  {
+            console.error("unknown mode: "+mode);
+        }
+    }
+
     function postCurrentTabUrl () {
         // chrome.tabs.getCurrent(function(current){ this is the background page tab
         chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-            if (tabs.length>0) {
-                var tab = tabs[0];
-                // assert(tab);
-                var url = tab.url;
-                if (mode == "stdin") {
-                    port.postMessage({ text: url });
-                } else if (mode == "http") {
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', POST_CURRENT_TAB_URL_SERVICE, true);
-                    xhr.setRequestHeader('Content-type', 'application/json');
-                    xhr.onreadystatechange = function() {
-                        if(xhr.readyState == 4 && xhr.status != 200) {
-                            console.log("failed to update current tab url: "+xhr.status);
-                            // alert(xhr.responseText);
-                        }
-                    }
-                    xhr.send(JSON.stringify({url: url}));
-                } else  {
-                    console.log("unknown mode: "+mode);
-                }
+            if (tabs.length == 0) {
+                return;
             }
+            var tab = tabs[0];
+            postMessage("/tabs/current/url", {url: tab.url}, mode);
         });
     }
 
@@ -59,13 +71,13 @@ function start ( mode ) {
         }
     });
 
-    // set the current tab initially
-    postCurrentTabUrl();
 
     // TODO shutdown native host process on exit
     // chrome.runtime.onExit.addListener(function() {
     //     port.postMessage({ exit: true });
     // });
+    // set the current tab on startup
+    postCurrentTabUrl();
 }
 
 // var MODE = "http";
