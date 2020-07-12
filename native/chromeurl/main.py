@@ -319,7 +319,8 @@ def main():
     parser = argparse.ArgumentParser()
     # argument passed by the browser
     parser.add_argument("native-host-extension-id", nargs="?")
-    parser.add_argument("--install", choices=["all", "native", "extension"])
+    parser.add_argument("--install-manifest",
+                        choices=["all", "native", "extension"])
     parser.add_argument("--extension-id",
                         # the published extension id
                         default="eibefbdcoojolecpoehkpmgfaeapngjk")

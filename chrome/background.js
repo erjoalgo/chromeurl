@@ -13,7 +13,7 @@ function start ( mode ) {
             "chrome-url disconnected: " + chrome.runtime.lastError.message,
             "Hint: consider installing or upgrading the native host app: \n",
             "$ pip install -U chromeurl",
-            "$ chromeurl --install native"].join("\n");
+            "$ chromeurl --install-manifest native"].join("\n");
         alert(msg);
     });
 

@@ -19,20 +19,20 @@
     - manually from the [[https://chrome.google.com/webstore/detail/chrome-current-url/eibefbdcoojolecpoehkpmgfaeapngjk][chrome web store]] (preferred)
     - automatically from the web store (may require root privileges)
        #+BEGIN_SRC sh
-       $ chromeurl --install extension
+       $ chromeurl --install-manifest extension
        #+END_SRC
     - from local source tree
       - navigate to ~chrome://extensions/~
       - ~Load Unpacked~ the extension directory rooted at ~./chrome~
-      - note the extension id as EXTENSION_UNPACKED_ID
+      - note the extension `ID` as UNPACKED_EXTENSION_ID
   - Native host manifest (make chrome aware of the native host). Options:
     - if extension came from the webstore
       #+BEGIN_SRC sh
-      $ sudo chromeurl --install native
+      $ sudo chromeurl --install-manifest native
       #+END_SRC
     - if unpacked locally and loaded from source:
       #+BEGIN_SRC sh
-      $ sudo chromeurl --install native --extension-id <EXTENSION_UNPACKED_ID>
+      $ sudo chromeurl --install-manifest native --extension-id <UNPACKED_EXTENSION_ID>
       #+END_SRC
 
 ** Get current url
