@@ -233,7 +233,7 @@ class Installer(object):
             try:
                 with open(manifest_path, "w") as manifest_fh:
                     json.dump(manifest_dict, manifest_fh, indent=4)
-            except OSError as ex:
+            except (OSError, IOError) as ex:
                 logging.info("\tfailed to install manifest at %s:\n\t %s",
                              manifest_path, ex)
                 continue
