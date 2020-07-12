@@ -8,9 +8,13 @@ function start ( mode ) {
     });
 
     port.onDisconnect.addListener(function() {
-        console.log("Disconnected");
         console.log("Disconnected: "+chrome.runtime.lastError.message);
-        alert("chrome-url: Disconnected: "+chrome.runtime.lastError.message);
+        var msg = [
+            "chrome-url disconnected: " + chrome.runtime.lastError.message,
+            "Hint: consider installing or upgrading the native host app: \n",
+            "$ pip install -U chromeurl",
+            "$ chromeurl --install native"].join("\n");
+        alert(msg);
     });
 
     function postMessage ( path, data, mode )  {
