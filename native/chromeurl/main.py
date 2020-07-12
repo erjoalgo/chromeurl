@@ -338,7 +338,7 @@ def main():
         installer = Installer(
             extension_hostname="com.erjoalgo.chrome_current_url",
             extension_id=args.extension_id,
-            executable_abs=sys.argv[0]
+            executable_abs=os.path.realpath(sys.argv[0])
         )
         if args.install == "all":
             installer.install_all()
