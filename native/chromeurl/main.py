@@ -355,7 +355,8 @@ def main():
     logging.info("version: %s", __version__)
     native_loop = NativeMessagesLoop(
         # reopen sys.stdin, sys.stdout as binary to avoid utf errors.
-        input_fh=open(0, "rb"), output_fh=open(1, "wb"))
+        input_fh=open("/dev/stdin", "rb"),
+        output_fh=open("/dev/stdout", "wb"))
     read_loop_thread = threading.Thread(target=native_loop.start)
     read_loop_thread.setDaemon(True)
     read_loop_thread.start()
