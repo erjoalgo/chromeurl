@@ -335,20 +335,21 @@ def main():
         log_level = logging.INFO
     logging.getLogger().setLevel(log_level)
 
-    if args.install:
+    if args.install_manifest:
         installer = Installer(
             extension_hostname="com.erjoalgo.chrome_current_url",
             extension_id=args.extension_id,
             executable_abs=os.path.realpath(sys.argv[0])
         )
-        if args.install == "all":
+        if args.install_manifest == "all":
             installer.install_all()
-        elif args.install == "native":
+        elif args.install_manifest == "native":
             installer.install_native_host()
-        elif args.install == "extension":
+        elif args.install_manifest == "extension":
             installer.install_extension()
         else:
-            raise ValueError("unknown install option: {}".format(args.install))
+            raise ValueError("unknown install option: {}".format(
+                args.install_manifest))
         return
 
     logging.info("version: %s", __version__)
