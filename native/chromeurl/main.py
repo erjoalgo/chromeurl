@@ -241,7 +241,7 @@ class Installer(object):
                 else:
                   raise ex
             installed_manifests.append(manifest_path)
-            logging.info("installed manifest at: %s", manifest_path)
+            logging.info("Installed manifest at: %s", manifest_path)
 
         return installed_manifests
 
