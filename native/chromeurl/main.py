@@ -238,6 +238,19 @@ class Installer(object):
                 if isinstance(ex, (FileNotFoundError, )):
                   logging.info(msg)
                   continue
+                elif isinstance(ex, (PermissionError, )):
+                    p = subprocess.Popen(["sudo", "tee", manifest_path],
+                                         stdin=subprocess.PIPE,
+                                         stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE)
+                    stdout, stderr=p.communicate(
+                        input=json.dumps(manifest_dict, indent=4).encode())
+                    logging.debug("stdout + stderr: " + (stdout + stderr).decode())
+                    if p.returncode:
+                        logging.error(
+                            "Error writing to %s after privilege escalation: %s",
+                            manifest_path, stderr.decode())
+                        raise ex
                 else:
                   raise ex
             installed_manifests.append(manifest_path)
