@@ -21,7 +21,7 @@
        #+BEGIN_SRC sh
        $ chromeurl --install-manifest extension
        #+END_SRC
-    - from local source tree
+    - manually from local source tree
       - navigate to ~chrome://extensions/~
       - ~Load Unpacked~ the extension directory rooted at ~./chrome~
       - note the extension `ID` as UNPACKED_EXTENSION_ID
