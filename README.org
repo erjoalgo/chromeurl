@@ -16,12 +16,12 @@
        $ python setup.py install --user
        #+END_SRC
   1. Install the extension. Options:
-    - manually from the [[https://chrome.google.com/webstore/detail/chrome-current-url/eibefbdcoojolecpoehkpmgfaeapngjk][chrome web store]] (preferred)
-    - automatically from the web store (may require root privileges)
+    - automatically from the web store
        #+BEGIN_SRC sh
        $ chromeurl --install-manifest extension
        #+END_SRC
-    - manually from local source tree
+    - manually from the [[https://chrome.google.com/webstore/detail/chrome-current-url/eibefbdcoojolecpoehkpmgfaeapngjk][chrome web store]]
+    - manually from local source tree (for development)
       - navigate to ~chrome://extensions/~
       - ~Load Unpacked~ the extension directory rooted at ~./chrome~
       - note the extension `ID` as UNPACKED_EXTENSION_ID
