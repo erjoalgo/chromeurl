@@ -6,6 +6,7 @@ Exposes the current chrome browser url via an http server endpoint.
 """
 
 
+from __future__ import absolute_import
 import argparse
 import http.server
 import json
