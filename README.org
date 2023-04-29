@@ -4,12 +4,13 @@
 #+OPTIONS: num:nil
 #+TITLE: Chrome Url Extension
 
-* Installing
-  1. Obtain the chrome native component (python package). Options:
-    - from pip
+* Installation
        #+BEGIN_SRC sh
-       $ pip install chromeurl
+       $ pip3 install chromeurl
+       $ chromeurl --install-manifest all
        #+END_SRC
+* Development
+  1. Obtain the chrome native component (python package). Options:
     - from the source tree
        #+BEGIN_SRC sh
        $ cd native
@@ -28,11 +29,11 @@
   1. Install native host manifest (make chrome aware of the native host). Options:
     - if extension came from the webstore
       #+BEGIN_SRC sh
-      $ sudo chromeurl --install-manifest native
+      $ chromeurl --install-manifest native
       #+END_SRC
-    - if unpacked locally and loaded from source:
+    - if unpacked locally and loaded from source (for development):
       #+BEGIN_SRC sh
-      $ sudo chromeurl --install-manifest native --extension-id <UNPACKED_EXTENSION_ID>
+      $ chromeurl --install-manifest native --extension-id <UNPACKED_EXTENSION_ID>
       #+END_SRC
 
 ** Get current url
