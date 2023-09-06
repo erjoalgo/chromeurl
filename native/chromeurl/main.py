@@ -266,20 +266,20 @@ class Installer(object):
             # https://developer.chrome.com/extensions/nativeMessaging
 
             # OS X (system-wide)
-            "/Library/Google/Chrome/NativeMessagingHosts/",
-            "/Library/Application Support/Chromium/NativeMessagingHosts/",
+            "/Library/Google/Chrome/NativeMessagingHosts",
+            "/Library/Application Support/Chromium/NativeMessagingHosts",
 
             # OS X (user-specific, default path)
-            "~/Library/Application Support/Google/Chrome/NativeMessagingHosts/",
-            "~/Library/Application Support/Chromium/NativeMessagingHosts/",
+            "~/Library/Application Support/Google/Chrome/NativeMessagingHosts",
+            "~/Library/Application Support/Chromium/NativeMessagingHosts",
 
             # Linux (system-wide)
-            "/etc/opt/chrome/native-messaging-hosts/",
-            "/etc/chromium/native-messaging-hosts/",
+            "/etc/opt/chrome/native-messaging-hosts",
+            "/etc/chromium/native-messaging-hosts",
 
             # Linux (user-specific, default path)
-            "~/.config/google-chrome/NativeMessagingHosts/",
-            "~/.config/chromium/NativeMessagingHosts/"
+            "~/.config/google-chrome/NativeMessagingHosts",
+            "~/.config/chromium/NativeMessagingHosts"
         ]
         manifest = {
             "name": self.extension_hostname,
