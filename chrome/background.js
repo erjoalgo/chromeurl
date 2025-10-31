@@ -25,7 +25,7 @@ function start ( mode ) {
             "Hint: consider installing or upgrading the native host app: \n",
             "$ pip install -U chromeurl",
             "$ chromeurl --install-manifest native"].join("\n");
-        console.log(msg);
+        console.error(msg);
         notify("ChromeURL Disconnected", msg);
     });
 
