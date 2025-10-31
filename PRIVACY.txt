@@ -1,0 +1,2 @@
+This extension does not connect to a remote server, all data storage is local.
+Data collected is limited to the current chromium browser URL.
