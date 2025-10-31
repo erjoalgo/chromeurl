@@ -1,18 +1,19 @@
 {
     "name": "Chrome Current Url",
     "description" : "Make chrome's currently active url available to other native processes",
-    "version": "2020.07.12.1",
-    "manifest_version": 2,
+    "version": "2025.10.31.1",
+    "manifest_version": 3,
     "background": {
-        "scripts": ["background.js"],
-        "persistent": false
+        "service_worker": "background.js"
     },
     "permissions": [
         "activeTab",
         "tabs",
         "nativeMessaging",
-        "http://*/",
-        "https://*/"
+        "notifications"
+    ],
+    "host_permissions": [
+        "*://*/*"
     ],
     "icons": {
         "512": "link-512.png",

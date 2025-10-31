@@ -1,5 +1,16 @@
 var CHROME_INFO_SERVICE = "http://localhost:19615";
 var NATIVE_MESSAGING_HOST = "com.erjoalgo.chrome_current_url";
+const ICON_PATH = '/link-128.png';
+
+function notify (title, message) {
+    chrome.notifications.create({
+        type: 'basic',
+        iconUrl: ICON_PATH,
+        title: title,
+        message: message,
+        priority: 1
+    });
+}
 
 function start ( mode ) {
     var port = chrome.runtime.connectNative(NATIVE_MESSAGING_HOST);
@@ -14,11 +25,16 @@ function start ( mode ) {
             "Hint: consider installing or upgrading the native host app: \n",
             "$ pip install -U chromeurl",
             "$ chromeurl --install-manifest native"].join("\n");
-        console.log(msg);
-        alert(msg);
+        console.error(msg);
+        notify("ChromeURL Disconnected", msg);
+        port.disconnected = true;
     });
 
     function postMessage ( path, data, mode )  {
+        if (port.disconnected) {
+            console.error(`refusing to post message. port has been disconnected.`);
+            return;
+        }
         if (mode == "stdin") {
             port.postMessage({path: path, data: data});
         } else if (mode == "http") {
@@ -32,7 +48,8 @@ function start ( mode ) {
                             "failed to update current tab url: "
                                 + xhr.status+ " " + xhr.responseText)
                         console.log(msg);
-                        alert(msg);
+                        notify("ChromeURL failed to update current tab URL",
+                               msg);
                     } else   {
                         console.log("posted url");
                     }
