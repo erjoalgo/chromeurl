@@ -27,9 +27,14 @@ function start ( mode ) {
             "$ chromeurl --install-manifest native"].join("\n");
         console.error(msg);
         notify("ChromeURL Disconnected", msg);
+        port.disconnected = true;
     });
 
     function postMessage ( path, data, mode )  {
+        if (port.disconnected) {
+            console.error(`refusing to post message. port has been disconnected.`);
+            return;
+        }
         if (mode == "stdin") {
             port.postMessage({path: path, data: data});
         } else if (mode == "http") {
