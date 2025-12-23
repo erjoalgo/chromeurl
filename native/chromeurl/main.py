@@ -7,6 +7,11 @@ Exposes the current chrome browser url via an http server endpoint.
 
 
 from __future__ import absolute_import
+
+import sys
+# Don't write anything to stdout, which is interpreted by the extension.
+sys.stdout = sys.stderr
+
 import argparse
 import datetime
 import http.server
@@ -17,7 +22,6 @@ import signal
 import socket
 import struct
 import subprocess
-import sys
 import threading
 import time
 import traceback
