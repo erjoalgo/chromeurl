@@ -5,7 +5,6 @@ Native messaging host component of chrome current url extension.
 Exposes the current chrome browser url via an http server endpoint.
 """
 
-
 from __future__ import absolute_import
 
 import sys
@@ -42,10 +41,6 @@ class UrlInfo(object):
         self.dtime = dtime
 
 
-def shutdown():
-    """Shuts down the service process via a unix signal."""
-    os.kill(os.getpid(), signal.SIGTERM)
-
 class CurrentUrlHolder(object):
     def __init__(self, logfile):
         self.current_url = None
@@ -73,6 +68,9 @@ class CurrentUrlHolder(object):
         return self.current_url
 
 
+def shutdown():
+    """Shuts down the service process via a unix signal."""
+    os.kill(os.getpid(), signal.SIGTERM)
 
 
 class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
