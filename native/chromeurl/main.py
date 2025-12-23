@@ -402,6 +402,7 @@ def main():
     else:
         log_level = logging.INFO
     logging.getLogger().setLevel(log_level)
+    logging.debug("debug logging enabled")
 
     if args.install_manifest:
         installer = Installer(
