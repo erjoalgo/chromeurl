@@ -20,7 +20,7 @@ Native messaging host component of chrome current url extension.
 Exposes the current chrome browser url via a REST endpoint"""
 
 readme = "README.md"
-license = {file = "LICENSE"}
+license = "GPL-3.0-or-later"
 keywords = ["chromium", "chrome", "url", "native"]
 classifiers = [
   "Development Status :: 4 - Beta",
