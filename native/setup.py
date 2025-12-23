@@ -1,22 +1,19 @@
-import os
-import re
-# from setuptools.command.install import install
 from setuptools import setup
 
-# Utility function to read the README file.
-# Used for the long_description.  It's nice, because now 1) we have a top level
-# README file and 2) it's easier to type in the README file than to put a raw
-# string in below ...
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+import os
+import re
+import tomllib
 
-VERSION = re.search("[0-9.]+", read("chromeurl/version.py")).group(0)
+VERSIONFILE = os.path.join(os.path.dirname(__file__), "pyproject.toml")
+with open(VERSIONFILE, "rb") as fh:
+    data = tomllib.load(fh)
+    __version__ = data["project"]["version"]
 
 NAME = EXE = PACKAGE = "chromeurl"
 
 setup(
     name=NAME,
-    version=VERSION,
+    version=__version__,
     author="Ernesto Alfonso",
     author_email="erjoalgo@gmail.com",
     description=("native messaging host component of chrome current url extension. "
@@ -25,7 +22,6 @@ setup(
     keywords="chrome chromium url native",
     url="https://github.com/erjoalgo/chrome-current-url",
     packages=[PACKAGE],
-    # long_description=read('README'),
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
