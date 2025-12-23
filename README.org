@@ -48,3 +48,15 @@
      to see background page log messages
 ** Security
    - Any local process may read the user's current url
+   - By default the browsing history is logged to ~/.browser-history.tsv
+** Config file
+   - Native host behavior can be configured via a config file at any of these locations:
+     - /etc/chromeurl.conf
+     - ~/.config/chromeurl.conf
+   - Example config file:
+     #+BEGIN_SRC conf
+     port = 1239
+     verbose = True
+     logfile = /dev/null
+     #+END_SRC
+   - See $chromeurl --help$ for a list of options
