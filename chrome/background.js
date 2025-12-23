@@ -70,7 +70,8 @@ function start ( mode ) {
                 return;
             }
             var tab = tabs[0];
-            postMessage("/tabs/current/url", {url: tab.url}, mode);
+            postMessage("/tabs/current/url", {url: tab.url,
+                                              title: tab.title}, mode);
         });
     }
 

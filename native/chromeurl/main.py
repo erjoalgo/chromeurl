@@ -8,6 +8,7 @@ Exposes the current chrome browser url via an http server endpoint.
 
 from __future__ import absolute_import
 import argparse
+import datetime
 import http.server
 import json
 import logging
@@ -33,6 +34,8 @@ except Exception as ex:
 class UrlInfo(object):
     def __init__(self, url, title, dtime):
         self.url = url
+        self.title = title
+        self.dtime = dtime
 
 
 def shutdown():
@@ -45,7 +48,7 @@ class CurrentUrlHolder(object):
 
     def set(self, info):
         self.current_url = info
-        logging.debug("updated current_url to %s", info.url)
+        logging.debug("updated current_url to %s, %s", info.url, info.title)
 
     def get(self):
         return self.current_url
@@ -93,7 +96,11 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
                 self.respond(400, "invalid json")
             else:
                 url = data["url"]
-                info = UrlInfo(url=url)
+                title = data.get("title")
+                now = datetime.datetime.now()
+                info = UrlInfo(url=url,
+                               title=title,
+                               dtime=now)
                 self.current_url_holder.set(info)
 
                 self.respond(200, "ok")
@@ -206,7 +213,11 @@ class NativeMessagesLoop(object):
                     logging.error("missing 'url': %s", data)
                 else:
                     url = data["url"]
-                    info = UrlInfo(url=url)
+                    title = data.get("title")
+                    now = datetime.datetime.now()
+                    info = UrlInfo(url=url,
+                               title=title,
+                               dtime=now)
                     self.current_url_holder.set(info)
             else:
                 logging.error("unknown request: %s", data)
