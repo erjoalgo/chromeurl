@@ -87,9 +87,10 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         """Handle GET requests."""
         if self.path == "/tabs/current/url":
-            logging.debug("served current url")
+            logging.debug("serving current url")
             urlinfo = self.server.current_url_holder.get()
             url = urlinfo.url or "None"
+            logging.debug("serving current url: %s", url)
             self.respond(200, url)
         elif self.path == "/version":
             self.respond(200, __version__)
