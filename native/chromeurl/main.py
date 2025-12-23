@@ -30,24 +30,27 @@ except Exception as ex:
     __version__ = "unknown"
 
 
-current_url = None
+class UrlInfo(object):
+    def __init__(self, url, title, dtime):
+        self.url = url
 
 
 def shutdown():
     """Shuts down the service process via a unix signal."""
     os.kill(os.getpid(), signal.SIGTERM)
 
+class CurrentUrlHolder(object):
+    def __init__(self, logfile):
+        self.current_url = None
 
-def set_current_url(new_url):
-    """Updates the current url."""
-    global current_url
-    current_url = new_url
-    logging.debug("updated current_url to %s", current_url)
+    def set(self, info):
+        self.current_url = info
+        logging.debug("updated current_url to %s", info.url)
+
+    def get(self):
+        return self.current_url
 
 
-def get_current_url():
-    """Retrieves the current url."""
-    return current_url
 
 
 class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
@@ -64,7 +67,9 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
         """Handle GET requests."""
         if self.path == "/tabs/current/url":
             logging.debug("served current url")
-            self.respond(200, current_url or "None")
+            urlinfo = self.server.current_url_holder.get()
+            url = urlinfo.url or "None"
+            self.respond(200, url)
         elif self.path == "/version":
             self.respond(200, __version__)
         elif self.path == "/shutdown":
@@ -87,7 +92,10 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
             if "url" not in data:
                 self.respond(400, "invalid json")
             else:
-                set_current_url(data["url"])
+                url = data["url"]
+                info = UrlInfo(url=url)
+                self.current_url_holder.set(info)
+
                 self.respond(200, "ok")
         else:
             self.respond(400, "unknown route: {}".format(self.path))
@@ -96,7 +104,8 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
 class ChromeInfoService(object):
     """A web server to serve info about a chrome browser instance."""
 
-    def __init__(self, port):
+    def __init__(self, port, current_url_holder):
+        self.current_url_holder = current_url_holder
         self.port = port
         self.httpd = None
 
@@ -141,8 +150,10 @@ class NativeMessagesLoop(object):
     """A loop to handle incoming messages from a chrome extension."""
 
     def __init__(self,
+                 current_url_holder,
                  input_fh,
                  output_fh):
+        self.current_url_holder = current_url_holder
         self.input_fh = input_fh
         self.output_fh = output_fh
 
@@ -195,7 +206,8 @@ class NativeMessagesLoop(object):
                     logging.error("missing 'url': %s", data)
                 else:
                     url = data["url"]
-                    set_current_url(url)
+                    info = UrlInfo(url=url)
+                    self.current_url_holder.set(info)
             else:
                 logging.error("unknown request: %s", data)
 
@@ -371,15 +383,17 @@ def main():
         return
 
     logging.info("version: %s", __version__)
+    current_url_holder = CurrentUrlHolder(args.logfile)
     native_loop = NativeMessagesLoop(
         # reopen sys.stdin, sys.stdout as binary to avoid utf errors.
+        current_url_holder = current_url_holder,
         input_fh=open("/dev/stdin", "rb"),
         output_fh=open("/dev/stdout", "wb"))
     read_loop_thread = threading.Thread(target=native_loop.start)
     read_loop_thread.setDaemon(True)
     read_loop_thread.start()
 
-    server = ChromeInfoService(args.port)
+    server = ChromeInfoService(args.port, current_url_holder)
     server.start()
 
 
