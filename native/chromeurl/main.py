@@ -45,10 +45,25 @@ def shutdown():
 class CurrentUrlHolder(object):
     def __init__(self, logfile):
         self.current_url = None
+        self.fh = None
+        self.logfile = logfile
+        if self.logfile:
+            logging.debug("logging to %s", self.logfile)
+            self.fh = open(logfile, "a")
+        else:
+            logging.debug("no logfile defined")
 
     def set(self, info):
         self.current_url = info
         logging.debug("updated current_url to %s, %s", info.url, info.title)
+        if self.fh and info.url:
+            line = "\t".join([info.url, info.title or "", str(info.dtime)])
+            try:
+                self.fh.write(line + "\n")
+                self.fh.flush()
+                logging.debug("flushed logfile")
+            except Exception as ex:
+                logging.error(f"failed to write to log file {self.logfile}: {ex}")
 
     def get(self):
         return self.current_url
@@ -368,6 +383,8 @@ def main():
     parser.add_argument("-p", "--port", default=19615, type=int)
     parser.add_argument("--version", action="version", version=__version__)
     parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("--logfile",
+                        default=os.path.expanduser("~/.browsing_history.tsv"))
     args = parser.parse_args()
 
     if args.verbose:
