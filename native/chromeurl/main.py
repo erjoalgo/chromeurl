@@ -168,6 +168,7 @@ class ChromeInfoService(object):
             time.sleep(2)
         server_address = ('', self.port)
         self.httpd = http.server.HTTPServer(server_address, ChromeInfoServiceHandler)
+        self.httpd.current_url_holder = self.current_url_holder
         logging.info("starting http server on %s", server_address)
         self.httpd.serve_forever()
 
