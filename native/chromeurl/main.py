@@ -12,6 +12,7 @@ import sys
 sys.stdout = sys.stderr
 
 import argparse
+import configargparse
 import datetime
 import http.server
 import json
@@ -374,7 +375,14 @@ def main():
     # Don't write anything to stdout, which is interpreted by the extension.
     sys.stdout = sys.stderr
 
-    parser = argparse.ArgumentParser()
+    parser = configargparse.ArgumentParser(
+        description = "ChromeUrl Extension native host component",
+         # Static config file paths
+        default_config_files = ["/etc/chromeurl.conf",
+                                os.path.expanduser("~/.config/chromeurl.conf"),
+                                'default.conf']
+    )
+
     # argument passed by the browser
     parser.add_argument("native-host-extension-id", nargs="?")
     parser.add_argument("--install-manifest",
