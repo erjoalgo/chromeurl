@@ -129,10 +129,6 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
             self.respond(200, url)
         elif self.path == "/version":
             self.respond(200, __version__)
-        elif self.path == "/shutdown":
-            self.respond(200, "ok")
-            logging.info("shutting down upon request...")
-            shutdown()
         else:
             self.respond(400, "unknown route: {}".format(self.path))
 
@@ -140,7 +136,11 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
         """Handle POST requests."""
         if not self.request_allowed():
             return
-        if self.path == "/tabs/current/url":
+        if self.path == "/shutdown":
+            self.respond(200, "ok")
+            logging.info("shutting down upon request...")
+            shutdown()
+        elif self.path == "/tabs/current/url":
 
             length = int(self.headers.get('content-length', 0))
 
@@ -178,8 +178,12 @@ class ChromeInfoService(object):
         "Shutdown a previously running server."
         if not shutdown_url:
             shutdown_url = "http://localhost:{}/shutdown".format(self.port)
-        resp = requests.get(shutdown_url)
+        resp = requests.post(shutdown_url)
+        if not resp.ok:
+            # instances older than 2026.11.9.0 only accept GET /shutdown
+            resp = requests.get(shutdown_url)
         if resp.status_code // 100 == 2:
+
             logging.info("shutdown request was accepted: %s", resp.text)
         else:
             logging.error("shutdown via %s failed: %s %s",
