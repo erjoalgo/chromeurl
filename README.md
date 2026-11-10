@@ -48,7 +48,7 @@
 ## Security
 
 -   Any local process may read the user's current url
--   By default the browsing history is logged to ~/.browser-history.tsv
+-   By default the browsing history is logged to ~/.browsing\_history.tsv
 
 
 ## Config file
