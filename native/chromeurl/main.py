@@ -230,7 +230,7 @@ class NativeMessagesLoop(object):
 
     def send(self, message: str) -> None:
         """Send the given message to the extension."""
-        encoded = message.encode()
+        encoded = json.dumps(message).encode()
         text_length_bytes = struct.pack("I", len(encoded))
         self.output_fh.write(text_length_bytes)
         self.output_fh.write(encoded)
