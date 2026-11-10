@@ -69,6 +69,14 @@ class CurrentUrlHolder(object):
         return self.current_url
 
 
+class ChromeInfoHTTPServer(http.server.HTTPServer):
+    """An HTTP server that holds the current url for its request handlers."""
+
+    def __init__(self, server_address, handler_class, current_url_holder):
+        super().__init__(server_address, handler_class)
+        self.current_url_holder = current_url_holder
+
+
 def shutdown():
     """Shuts down the service process via a unix signal."""
     os.kill(os.getpid(), signal.SIGTERM)
@@ -167,8 +175,9 @@ class ChromeInfoService(object):
                 logging.info("error shutting down previous service: %s", ex)
             time.sleep(2)
         server_address = ('127.0.0.1', self.port)
-        self.httpd = http.server.HTTPServer(server_address, ChromeInfoServiceHandler)
-        self.httpd.current_url_holder = self.current_url_holder
+        self.httpd = ChromeInfoHTTPServer(server_address, ChromeInfoServiceHandler,
+                                          self.current_url_holder)
+
         logging.info("starting http server on %s", server_address)
         self.httpd.serve_forever()
 
