@@ -1,7 +1,7 @@
 {
     "name": "Chrome Current Url",
     "description" : "Make chrome's currently active url available to other native processes",
-    "version": "2025.10.31.1",
+    "version": "2026.11.9.0",
     "manifest_version": 3,
     "background": {
         "service_worker": "background.js"
