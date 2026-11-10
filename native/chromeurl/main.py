@@ -5,7 +5,7 @@ Native messaging host component of chrome current url extension.
 Exposes the current chrome browser url via an http server endpoint.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, annotations
 
 import sys
 # Don't write anything to stdout, which is interpreted by the extension.
@@ -25,6 +25,7 @@ import subprocess
 import threading
 import time
 import traceback
+from typing import Any, BinaryIO, Dict, List, Optional, TextIO, Tuple, Type
 
 import requests
 
@@ -36,16 +37,16 @@ except Exception as ex:
 
 
 class UrlInfo(object):
-    def __init__(self, url, title, dtime):
+    def __init__(self, url: str, title: Optional[str], dtime: datetime.datetime) -> None:
         self.url = url
         self.title = title
         self.dtime = dtime
 
 
 class CurrentUrlHolder(object):
-    def __init__(self, logfile):
-        self.current_url = None
-        self.fh = None
+    def __init__(self, logfile: Optional[str]) -> None:
+        self.current_url: Optional[UrlInfo] = None
+        self.fh: Optional[TextIO] = None
         self.logfile = logfile
         if self.logfile:
             logging.debug("logging to %s", self.logfile)
@@ -54,7 +55,7 @@ class CurrentUrlHolder(object):
         else:
             logging.debug("no logfile defined")
 
-    def set(self, info):
+    def set(self, info: UrlInfo) -> None:
         self.current_url = info
         logging.debug("updated current_url to %s, %s", info.url, info.title)
         if self.fh and info.url:
@@ -66,19 +67,21 @@ class CurrentUrlHolder(object):
             except Exception as ex:
                 logging.error(f"failed to write to log file {self.logfile}: {ex}")
 
-    def get(self):
+    def get(self) -> Optional[UrlInfo]:
         return self.current_url
 
 
 class ChromeInfoHTTPServer(http.server.HTTPServer):
     """An HTTP server that holds the current url for its request handlers."""
 
-    def __init__(self, server_address, handler_class, current_url_holder):
+    def __init__(self, server_address: Tuple[str, int],
+                 handler_class: Type[http.server.BaseHTTPRequestHandler],
+                 current_url_holder: CurrentUrlHolder) -> None:
         super().__init__(server_address, handler_class)
         self.current_url_holder = current_url_holder
 
 
-def shutdown():
+def shutdown() -> None:
     """Shuts down the service process via a unix signal."""
     os.kill(os.getpid(), signal.SIGTERM)
 
@@ -86,14 +89,16 @@ def shutdown():
 class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
     """A web server to serve info about a chrome browser instance."""
 
-    def respond(self, status, body):
+    server: ChromeInfoHTTPServer
+
+    def respond(self, status: int, body: str) -> None:
         """Sends an http response."""
         self.send_response(status)
         self.send_header("Content-type", "text/plain")
         self.end_headers()
         self.wfile.write(body.encode())
 
-    def do_GET(self):
+    def do_GET(self) -> None:
         """Handle GET requests."""
         if self.path == "/tabs/current/url":
             logging.debug("serving current url")
@@ -110,7 +115,7 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
         else:
             self.respond(400, "unknown route: {}".format(self.path))
 
-    def do_POST(self):
+    def do_POST(self) -> None:
         """Handle POST requests."""
         if self.path == "/tabs/current/url":
             length = int(self.headers.get('content-length', 0))
@@ -140,12 +145,12 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
 class ChromeInfoService(object):
     """A web server to serve info about a chrome browser instance."""
 
-    def __init__(self, port, current_url_holder):
+    def __init__(self, port: int, current_url_holder: CurrentUrlHolder) -> None:
         self.current_url_holder = current_url_holder
         self.port = port
-        self.httpd = None
+        self.httpd: Optional[ChromeInfoHTTPServer] = None
 
-    def send_shutdown_request(self, shutdown_url=None):
+    def send_shutdown_request(self, shutdown_url: Optional[str] = None) -> None:
         "Shutdown a previously running server."
         if not shutdown_url:
             shutdown_url = "http://localhost:{}/shutdown".format(self.port)
@@ -157,7 +162,7 @@ class ChromeInfoService(object):
                           shutdown_url, resp.status_code, resp.text)
 
     @staticmethod
-    def port_is_open(port):
+    def port_is_open(port: int) -> bool:
         """Returns true if the given port is open locally."""
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         result = sock.connect_ex(('127.0.0.1', port))
@@ -165,7 +170,7 @@ class ChromeInfoService(object):
         sock.close()
         return is_open
 
-    def start(self):
+    def start(self) -> None:
         """Start the http server."""
         logging.info("checking for port conflicts...")
         while self.port_is_open(self.port):
@@ -188,21 +193,21 @@ class NativeMessagesLoop(object):
     """A loop to handle incoming messages from a chrome extension."""
 
     def __init__(self,
-                 current_url_holder,
-                 input_fh,
-                 output_fh):
+                 current_url_holder: CurrentUrlHolder,
+                 input_fh: BinaryIO,
+                 output_fh: BinaryIO) -> None:
         self.current_url_holder = current_url_holder
         self.input_fh = input_fh
         self.output_fh = output_fh
 
-    def send(self, message):
+    def send(self, message: str) -> None:
         """Send the given message to the extension."""
         text_length_bytes = struct.pack("I", len(message))
         self.output_fh.write(text_length_bytes)
         self.output_fh.write(message.encode())
         self.output_fh.flush()
 
-    def read_message(self):
+    def read_message(self) -> str:
         """Read the next message sent by the extension."""
         text_length_bytes = self.input_fh.read(4)
         logging.debug("raw 4: %s", text_length_bytes)
@@ -216,7 +221,7 @@ class NativeMessagesLoop(object):
         logging.debug("message is %s", msg)
         return msg
 
-    def start(self):
+    def start(self) -> None:
         "Continuously read messages sent by the chrome extension."
         logging.info("starting native messaging stdin read loop...")
 
@@ -258,18 +263,19 @@ class Installer(object):
     """Install the chrome native host and external extension"""
 
     def __init__(self,
-                 extension_hostname, extension_id,
-                 executable_abs):
+                 extension_hostname: str, extension_id: str,
+                 executable_abs: str) -> None:
         self.extension_hostname = extension_hostname
         self.executable_abs = executable_abs
         self.extension_id = extension_id
         self.chrome_webstore_update_url = "https://clients2.google.com/service/update2/crx"
 
     @staticmethod
-    def install_manifest(filename_sans_ext, manifest_dict, directory_candidates,
-                         max_installations=float("inf")):
+    def install_manifest(filename_sans_ext: str, manifest_dict: Dict[str, Any],
+                         directory_candidates: List[str],
+                         max_installations: float = float("inf")) -> List[str]:
         """Install a manifest onto a number of possible directory candidates"""
-        installed_manifests = []
+        installed_manifests: List[str] = []
         for cand_maybe_tilde in directory_candidates:
             if len(installed_manifests) >= max_installations:
                 break
@@ -314,7 +320,7 @@ class Installer(object):
 
         return installed_manifests
 
-    def install_native_host(self):
+    def install_native_host(self) -> None:
         """install chrome native host manifest file"""
         install_location_candidates = [
             # https://developer.chrome.com/extensions/nativeMessaging
@@ -351,7 +357,7 @@ class Installer(object):
             logging.fatal("could not discover suitable native host installation directory")
             exit(1)
 
-    def install_extension(self):
+    def install_extension(self) -> None:
         """install chrome external extension"""
         external_extension_install_locations = [
             # https://developer.chrome.com/extensions/external_extensions
@@ -377,13 +383,14 @@ class Installer(object):
                 "Install the extension manually from the chrome webstore: %s",
                 webstore_url)
 
-    def install_all(self):
+    def install_all(self) -> None:
         """install both native host manifest and external extension"""
         self.install_native_host()
         self.install_extension()
 
 
-def main():
+def main() -> None:
+
     "Main"
     # Don't write anything to stdout, which is interpreted by the extension.
     sys.stdout = sys.stderr
