@@ -49,7 +49,8 @@ class CurrentUrlHolder(object):
         self.logfile = logfile
         if self.logfile:
             logging.debug("logging to %s", self.logfile)
-            self.fh = open(logfile, "a")
+            self.fh = open(self.logfile, "a")
+
         else:
             logging.debug("no logfile defined")
 
