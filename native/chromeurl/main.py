@@ -120,7 +120,7 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
                 info = UrlInfo(url=url,
                                title=title,
                                dtime=now)
-                self.current_url_holder.set(info)
+                self.server.current_url_holder.set(info)
 
                 self.respond(200, "ok")
         else:
