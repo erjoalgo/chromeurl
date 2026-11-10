@@ -11,8 +11,10 @@ function notify (title, message) {
     });
 }
 
-function start () {
-    var port = chrome.runtime.connectNative(NATIVE_MESSAGING_HOST);
+var port = null;
+
+function connect () {
+    port = chrome.runtime.connectNative(NATIVE_MESSAGING_HOST);
     port.onMessage.addListener(function(msg) {
         console.log("Received" + msg);
     });
@@ -28,56 +30,53 @@ function start () {
         notify("ChromeURL Disconnected", msg);
         port.disconnected = true;
     });
-
-    function postMessage ( path, data )  {
-        if (port.disconnected) {
-            console.error(`refusing to post message. port has been disconnected.`);
-            return;
-        }
-        port.postMessage({path: path, data: data});
-    }
-
-    function postCurrentTabUrl () {
-        // chrome.tabs.getCurrent(function(current){ this is the background page tab
-        chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-            if (tabs.length == 0) {
-                return;
-            }
-            var tab = tabs[0];
-            postMessage("/tabs/current/url", {url: tab.url,
-                                              title: tab.title});
-        });
-    }
-
-    chrome.tabs.onActivated.addListener(function(activeInfo){
-        postCurrentTabUrl();
-    });
-
-    chrome.tabs.onUpdated.addListener(function(tabId, changeInfo){
-        if (changeInfo.url != null) {
-            postCurrentTabUrl();
-        }
-    });
-
-    chrome.windows.onFocusChanged.addListener(function(windowId){
-        if (windowId != chrome.windows.WINDOW_ID_NONE) {
-            chrome.tabs.query({windowId: windowId, active: true}, function(tabs){
-                // assume there is always a tab if there is a current window
-                postCurrentTabUrl();
-            });
-        }
-    });
-    // set the current tab on startup
-    postCurrentTabUrl();
 }
 
-chrome.runtime.onInstalled.addListener(function() {
-    start();
+function postMessage ( path, data )  {
+    if (port == null) {
+        connect();
+    }
+    if (port.disconnected) {
+        console.error(`refusing to post message. port has been disconnected.`);
+        return;
+    }
+    port.postMessage({path: path, data: data});
+}
+
+function postCurrentTabUrl () {
+    // chrome.tabs.getCurrent(function(current){ this is the background page tab
+    chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+        if (tabs.length == 0) {
+            return;
+        }
+        var tab = tabs[0];
+        postMessage("/tabs/current/url", {url: tab.url,
+                                          title: tab.title});
+    });
+}
+
+// Register listeners at the top level, so Chrome can wake the service
+// worker for these events after stopping it.
+chrome.tabs.onActivated.addListener(function(activeInfo){
+    postCurrentTabUrl();
 });
 
-chrome.runtime.onStartup.addListener(function() {
-    // console.log( "on startup..." );
-    start();
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo){
+    if (changeInfo.url != null) {
+        postCurrentTabUrl();
+    }
 });
 
+chrome.windows.onFocusChanged.addListener(function(windowId){
+    if (windowId != chrome.windows.WINDOW_ID_NONE) {
+        chrome.tabs.query({windowId: windowId, active: true}, function(tabs){
+            // assume there is always a tab if there is a current window
+            postCurrentTabUrl();
+        });
+    }
+});
+
+// Connect and send the current tab whenever the service worker starts,
+// including on browser startup and extension install.
+postCurrentTabUrl();
 // TODO lint
