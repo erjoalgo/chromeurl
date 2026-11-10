@@ -10,11 +10,11 @@
 
 1.  Obtain the chrome native component (python package). Options:
     -   from the source tree
-        
+
             $ pip install --user ./native
 2.  Install the extension. Options:
     -   automatically from the web store
-        
+
             $ chromeurl --install-manifest extension
     -   manually from the [chrome web store](https://chrome.google.com/webstore/detail/chrome-current-url/eibefbdcoojolecpoehkpmgfaeapngjk)
     -   manually from local source tree (for development)
@@ -23,17 +23,17 @@
         -   note the extension \`ID\` as UNPACKED\_EXTENSION\_ID
 3.  Install native host manifest (make chrome aware of the native host). Options:
     -   if extension came from the webstore
-        
+
             $ chromeurl --install-manifest native
     -   if unpacked locally and loaded from source (for development):
-        
+
             $ chromeurl --install-manifest native --extension-id <UNPACKED_EXTENSION_ID>
 
 
 ## Get current url
 
 -   While chrome is running, make an HTTP request to get the current url
-    
+
         $ curl http://127.0.0.1:19615/tabs/current/url
         https://developer.chrome.com/extensions/activeTab
 
@@ -57,7 +57,7 @@
     -   /etc/chromeurl.conf
     -   ~/.config/chromeurl.conf
 -   Example config file:
-    
+
         port = 1239
         verbose = True
         logfile = /dev/null
