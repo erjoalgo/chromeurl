@@ -20,9 +20,12 @@ function connect () {
     });
 
     port.onDisconnect.addListener(function() {
-        console.error("Disconnected: "+chrome.runtime.lastError.message);
+        var error = chrome.runtime.lastError;
+        var reason = error ? error.message : "native host exited";
+        console.error("Disconnected: " + reason);
         var msg = [
-            "chrome-url disconnected: " + chrome.runtime.lastError.message,
+            "chrome-url disconnected: " + reason,
+
             "Hint: consider installing or upgrading the native host app: \n",
             "$ pip install -U chromeurl",
             "$ chromeurl --install-manifest native"].join("\n");
