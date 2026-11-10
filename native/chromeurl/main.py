@@ -89,7 +89,7 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
         if self.path == "/tabs/current/url":
             logging.debug("serving current url")
             urlinfo = self.server.current_url_holder.get()
-            url = urlinfo.url or "None"
+            url = (urlinfo and urlinfo.url) or "None"
             logging.debug("serving current url: %s", url)
             self.respond(200, url)
         elif self.path == "/version":
