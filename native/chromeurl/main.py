@@ -448,8 +448,8 @@ def main() -> None:
         current_url_holder = current_url_holder,
         input_fh=open("/dev/stdin", "rb"),
         output_fh=open("/dev/stdout", "wb"))
-    read_loop_thread = threading.Thread(target=native_loop.start)
-    read_loop_thread.setDaemon(True)
+    read_loop_thread = threading.Thread(target=native_loop.start, daemon=True)
+
     read_loop_thread.start()
 
     server = ChromeInfoService(args.port, current_url_holder)
