@@ -16,9 +16,8 @@ authors = [
 maintainers = [
   {name = "Ernesto Alfonso", email = "erjoalgo@gmail.com"},
 ]
-description = """
-Native messaging host component of chrome current url extension. 
-Exposes the current chrome browser url via a REST endpoint"""
+description = "Native messaging host for the Chrome Current URL extension: serves the current tab's url over a local HTTP endpoint"
+
 
 readme = "README.md"
 license = "GPL-3.0-or-later"
