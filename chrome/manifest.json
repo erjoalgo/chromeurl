@@ -12,9 +12,6 @@
         "nativeMessaging",
         "notifications"
     ],
-    "host_permissions": [
-        "*://*/*"
-    ],
     "icons": {
         "512": "link-512.png",
         "128": "link-128.png"
