@@ -109,7 +109,13 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
         if host not in (f"localhost:{port}", f"127.0.0.1:{port}"):
             self.respond(403, f"forbidden host: {host}")
             return False
+        # Browsers send Origin on cross-site POSTs (forms, fetch); local
+        # clients such as curl and requests don't.
+        if self.headers.get("Origin") is not None:
+            self.respond(403, "requests from web pages are not allowed")
+            return False
         return True
+
 
     def do_GET(self) -> None:
         """Handle GET requests."""
