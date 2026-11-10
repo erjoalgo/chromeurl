@@ -166,7 +166,7 @@ class ChromeInfoService(object):
             except requests.exceptions.ConnectionError as ex:
                 logging.info("error shutting down previous service: %s", ex)
             time.sleep(2)
-        server_address = ('', self.port)
+        server_address = ('127.0.0.1', self.port)
         self.httpd = http.server.HTTPServer(server_address, ChromeInfoServiceHandler)
         self.httpd.current_url_holder = self.current_url_holder
         logging.info("starting http server on %s", server_address)
