@@ -39,3 +39,11 @@ chromeurl = "chromeurl.main:main"
 
 [project.entry-points."chromeurl.main"]
 chromeurl = "chromeurl.main:main"
+
+[tool.mypy]
+strict = true
+files = ["chromeurl"]
+
+[[tool.mypy.overrides]]
+module = ["configargparse"]
+ignore_missing_imports = true
