@@ -112,7 +112,8 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         """Handle POST requests."""
         if self.path == "/tabs/current/url":
-            length = int(self.headers.get('content-length'))
+            length = int(self.headers.get('content-length', 0))
+
             data_raw = self.rfile.read(length)
             try:
                 data = json.loads(data_raw.decode())
