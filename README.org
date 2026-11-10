@@ -13,8 +13,8 @@
   1. Obtain the chrome native component (python package). Options:
     - from the source tree
        #+BEGIN_SRC sh
-       $ cd native
-       $ python setup.py install --user
+       $ pip install --user ./native
+
        #+END_SRC
   1. Install the extension. Options:
     - automatically from the web store
