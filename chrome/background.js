@@ -43,15 +43,18 @@ function postMessage ( path, data )  {
     port.postMessage({path: path, data: data});
 }
 
+function postTab ( tab ) {
+    postMessage("/tabs/current/url", {url: tab.url,
+                                      title: tab.title});
+}
+
 function postCurrentTabUrl () {
     // chrome.tabs.getCurrent(function(current){ this is the background page tab
     chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
         if (tabs.length == 0) {
             return;
         }
-        var tab = tabs[0];
-        postMessage("/tabs/current/url", {url: tab.url,
-                                          title: tab.title});
+        postTab(tabs[0]);
     });
 }
 
@@ -70,9 +73,11 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo){
 chrome.windows.onFocusChanged.addListener(function(windowId){
     if (windowId != chrome.windows.WINDOW_ID_NONE) {
         chrome.tabs.query({windowId: windowId, active: true}, function(tabs){
-            // assume there is always a tab if there is a current window
-            postCurrentTabUrl();
+            if (tabs.length > 0) {
+                postTab(tabs[0]);
+            }
         });
+
     }
 });
 
