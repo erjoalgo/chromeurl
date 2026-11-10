@@ -98,8 +98,23 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body.encode())
 
+    def request_allowed(self) -> bool:
+        """Reject requests that a web page open in the browser could make.
+
+        Responds 403 and returns False if the request is refused."""
+        port = self.server.server_port
+        host = self.headers.get("Host")
+        # DNS rebinding: a page on an attacker's domain, resolved to
+        # 127.0.0.1, sends that domain as the Host.
+        if host not in (f"localhost:{port}", f"127.0.0.1:{port}"):
+            self.respond(403, f"forbidden host: {host}")
+            return False
+        return True
+
     def do_GET(self) -> None:
         """Handle GET requests."""
+        if not self.request_allowed():
+            return
         if self.path == "/tabs/current/url":
             logging.debug("serving current url")
             urlinfo = self.server.current_url_holder.get()
@@ -117,7 +132,10 @@ class ChromeInfoServiceHandler(http.server.BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         """Handle POST requests."""
+        if not self.request_allowed():
+            return
         if self.path == "/tabs/current/url":
+
             length = int(self.headers.get('content-length', 0))
 
             data_raw = self.rfile.read(length)
