@@ -1,1 +1,3 @@
-__version__ = "2023.09.06.01"
+import importlib.metadata
+
+__version__ = importlib.metadata.version("chromeurl")
