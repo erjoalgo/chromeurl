@@ -1,4 +1,3 @@
-var CHROME_INFO_SERVICE = "http://localhost:19615";
 var NATIVE_MESSAGING_HOST = "com.erjoalgo.chrome_current_url";
 const ICON_PATH = '/link-128.png';
 
@@ -12,7 +11,7 @@ function notify (title, message) {
     });
 }
 
-function start ( mode ) {
+function start () {
     var port = chrome.runtime.connectNative(NATIVE_MESSAGING_HOST);
     port.onMessage.addListener(function(msg) {
         console.log("Received" + msg);
@@ -30,37 +29,12 @@ function start ( mode ) {
         port.disconnected = true;
     });
 
-    function postMessage ( path, data, mode )  {
+    function postMessage ( path, data )  {
         if (port.disconnected) {
             console.error(`refusing to post message. port has been disconnected.`);
             return;
         }
-        if (mode == "stdin") {
-            port.postMessage({path: path, data: data});
-        } else if (mode == "http") {
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', CHROME_INFO_SERVICE + path, true);
-            xhr.setRequestHeader('Content-type', 'application/json');
-            xhr.onreadystatechange = function() {
-                if(xhr.readyState == 4) {
-                    if (xhr.status != 200) {
-                        var msg = (
-                            "failed to update current tab url: "
-                                + xhr.status+ " " + xhr.responseText)
-                        console.log(msg);
-                        notify("ChromeURL failed to update current tab URL",
-                               msg);
-                    } else   {
-                        console.log("posted url");
-                    }
-                }
-            }
-            if (data)  {
-                xhr.send(JSON.stringify(data));
-            }
-        } else  {
-            console.error("unknown mode: "+mode);
-        }
+        port.postMessage({path: path, data: data});
     }
 
     function postCurrentTabUrl () {
@@ -71,7 +45,7 @@ function start ( mode ) {
             }
             var tab = tabs[0];
             postMessage("/tabs/current/url", {url: tab.url,
-                                              title: tab.title}, mode);
+                                              title: tab.title});
         });
     }
 
@@ -97,15 +71,13 @@ function start ( mode ) {
     postCurrentTabUrl();
 }
 
-// var MODE = "http";
-var MODE = "stdin";
-
 chrome.runtime.onInstalled.addListener(function() {
-    start(MODE);
+    start();
 });
 
 chrome.runtime.onStartup.addListener(function() {
     // console.log( "on startup..." );
-    start(MODE);
+    start();
 });
+
 // TODO lint
