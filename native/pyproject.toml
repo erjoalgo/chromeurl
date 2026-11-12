@@ -28,10 +28,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/erjoalgo/chrome-current-url"
-Documentation = "https://github.com/erjoalgo/chrome-current-url"
-Repository = "https://github.com/erjoalgo/chrome-current-url"
-"Bug Tracker" = "https://github.com/erjoalgo/chrome-current-url/issues"
+Homepage = "https://github.com/erjoalgo/chromeurl"
+Documentation = "https://github.com/erjoalgo/chromeurl"
+Repository = "https://github.com/erjoalgo/chromeurl"
+"Bug Tracker" = "https://github.com/erjoalgo/chromeurl/issues"
 
 [project.scripts]
 chromeurl = "chromeurl.main:main"
