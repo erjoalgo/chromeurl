@@ -20,7 +20,7 @@
     -   manually from local source tree (for development)
         -   navigate to `chrome://extensions/`
         -   `Load Unpacked` the extension directory rooted at `./chrome`
-        -   note the extension \`ID\` as UNPACKED\_EXTENSION\_ID
+        -   note the extension `ID` as `UNPACKED_EXTENSION_ID`
 3.  Install native host manifest (make chrome aware of the native host). Options:
     -   if extension came from the webstore
 
@@ -61,5 +61,5 @@
         port = 1239
         verbose = True
         logfile = /dev/null
--   See $chromeurl --help$ for a list of options
+-   See `chromeurl --help` for a list of options
 
