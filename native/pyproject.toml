@@ -24,7 +24,13 @@ license = "GPL-3.0-or-later"
 keywords = ["chromium", "chrome", "url", "native"]
 classifiers = [
   "Development Status :: 4 - Beta",
-  "Programming Language :: Python"
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Operating System :: MacOS",
+  "Operating System :: POSIX :: Linux",
+  "Topic :: Internet :: WWW/HTTP :: Browsers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
 ]
 
 [project.urls]
