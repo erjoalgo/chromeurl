@@ -41,8 +41,8 @@
 ## Debugging
 
 -   start chromium from a terminal to see native host debug messages
--   navigate to the extension background from page (chrome://extensions)
-    to see background page log messages
+-   in chrome://extensions, click the extension's "service worker" link
+    to see its log messages
 
 
 ## Security

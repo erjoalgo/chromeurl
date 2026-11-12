@@ -44,8 +44,8 @@
       #+END_SRC
 ** Debugging
    - start chromium from a terminal to see native host debug messages
-   - navigate to the extension background from page (chrome://extensions)
-     to see background page log messages
+   - in chrome://extensions, click the extension's "service worker" link
+     to see its log messages
 ** Security
    - Any local process may read the user's current url
    - By default the browsing history is logged to ~/.browsing_history.tsv
